@@ -218,7 +218,14 @@ impl Checkbox {
     fn checkbox_container(name: String) -> impl Bundle {
         (
             Name::new(name),
-            ButtonBundle::default(),
+            ButtonBundle {
+                image: UiImage {
+                    color: Color::NONE,
+                    ..default()
+                },
+                ..default()
+            },
+            BackgroundColor(Color::NONE),
             TrackedInteraction::default(),
         )
     }

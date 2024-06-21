@@ -10,13 +10,13 @@ impl Plugin for HierarchyDelayPlugin {
             PostUpdate,
             update_ui_surface
                 .after(UiSystem::Layout)
-                .in_set(HierarchyDelayPreUpdate),
+                .in_set(HierarchyDelayPostUpdate),
         );
     }
 }
 
 #[derive(SystemSet, Clone, Eq, Debug, Hash, PartialEq)]
-pub struct HierarchyDelayPreUpdate;
+pub struct HierarchyDelayPostUpdate;
 
 fn update_ui_surface(
     q_parents: Query<Entity, (With<DelayResetChildrenInUiSurface>, With<Children>)>,

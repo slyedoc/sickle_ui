@@ -555,7 +555,14 @@ impl Slider {
     fn handle(slider: Entity) -> impl Bundle {
         (
             Name::new("Handle"),
-            ButtonBundle::default(),
+            ButtonBundle {
+                image: UiImage {
+                    color: Color::NONE,
+                    ..default()
+                },
+                ..default()
+            },
+            BackgroundColor(Color::NONE),
             TrackedInteraction::default(),
             SliderDragHandle { slider },
             Draggable::default(),

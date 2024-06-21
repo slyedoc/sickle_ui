@@ -86,14 +86,14 @@ impl DefaultTheme for ThemeTestBox {
 }
 
 const BOX_SIZE: f32 = 100.;
-const COLOR_B: Color = Color::rgb(0.1, 0.1, 0.1);
-const COLOR_I: Color = Color::rgb(0.2, 0.2, 0.2);
-const COLOR_1: Color = Color::rgb(0.25, 0.25, 0.25);
-const COLOR_2: Color = Color::rgb(0.3, 0.3, 0.3);
-const COLOR_3: Color = Color::rgb(0.35, 0.35, 0.35);
-const COLOR_4: Color = Color::rgb(0.38, 0.38, 0.38);
-const COLOR_5: Color = Color::rgb(0.41, 0.41, 0.41);
-const COLOR_6: Color = Color::rgb(0.43, 0.43, 0.43);
+const COLOR_B: Color = Color::srgb(0.1, 0.1, 0.1);
+const COLOR_I: Color = Color::srgb(0.2, 0.2, 0.2);
+const COLOR_1: Color = Color::srgb(0.25, 0.25, 0.25);
+const COLOR_2: Color = Color::srgb(0.3, 0.3, 0.3);
+const COLOR_3: Color = Color::srgb(0.35, 0.35, 0.35);
+const COLOR_4: Color = Color::srgb(0.38, 0.38, 0.38);
+const COLOR_5: Color = Color::srgb(0.41, 0.41, 0.41);
+const COLOR_6: Color = Color::srgb(0.43, 0.43, 0.43);
 
 impl ThemeTestBox {
     fn base_theme() -> Theme<ThemeTestBox> {
@@ -277,7 +277,7 @@ fn setup(
                     align_self: AlignSelf::Stretch,
                     ..default()
                 },
-                background_color: Color::DARK_GRAY.into(),
+                background_color: bevy::color::palettes::css::DARK_GRAY.into(),
                 ..default()
             },
             TargetCamera(main_camera),

@@ -151,15 +151,16 @@ impl EntityCommand for SetImageTint {
             );
         }
 
-        // TODO: bevy 0.14: Wire to UiImage.color
-        if let Some(mut backgroun_color) = world.get_mut::<BackgroundColor>(entity) {
-            if backgroun_color.0 != self.image_tint {
-                backgroun_color.0 = self.image_tint;
-            }
-        } else {
-            world
-                .entity_mut(entity)
-                .insert(BackgroundColor(self.image_tint));
+        let Some(mut image) = world.get_mut::<UiImage>(entity) else {
+            warn!(
+                "Failed to set image tint on entity {:?}: No UiImage component found!",
+                entity
+            );
+            return;
+        };
+
+        if image.color != self.image_tint {
+            image.color = self.image_tint;
         }
     }
 }
@@ -550,11 +551,13 @@ impl EntityCommand for SetIcon {
             IconData::FontCodepoint(font, codepoint, color, font_size) => {
                 // TODO: Check lock on text / font once it is available
 
-                SetImageTint {
-                    image_tint: Color::NONE,
-                    check_lock: self.check_lock,
-                }
-                .apply(entity, world);
+                world.entity_mut(entity).insert(BackgroundColor(Color::NONE));
+
+                // SetBackgroundColor {
+                //     background_color: Color::NONE,
+                //     check_lock: self.check_lock,
+                // }
+                // .apply(entity, world);
 
                 world.entity_mut(entity).remove::<UiImage>();
                 let font = world.resource::<AssetServer>().load(font);

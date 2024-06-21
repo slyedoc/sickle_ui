@@ -312,7 +312,14 @@ impl RadioButton {
     fn button(name: String) -> impl Bundle {
         (
             Name::new(name),
-            ButtonBundle::default(),
+            ButtonBundle {
+                image: UiImage {
+                    color: Color::NONE,
+                    ..default()
+                },
+                ..default()
+            },
+            BackgroundColor(Color::NONE),
             TrackedInteraction::default(),
         )
     }
@@ -356,7 +363,7 @@ pub trait UiRadioGroupExt {
 
 impl UiRadioGroupExt for UiBuilder<'_, Entity> {
     /// A simple radio group with options. Optionally, the radio group can be "unselected"
-    /// 
+    ///
     /// ### PseudoState usage
     /// - `PseudoState::Checked` is added to the currently selected `RadioButton` entity
     fn radio_group(

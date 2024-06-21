@@ -188,7 +188,7 @@ impl UiUtils {
                 }
             },
             RenderTarget::Image(handle) => {
-                let Some(image) = world.resource::<Assets<Image>>().get(handle) else {
+                let Some(image) = world.resource::<Assets<Image>>().get(&handle) else {
                     return UiUtils::resolution_to_vec2(
                         &UiUtils::get_primary_window(world).resolution,
                     );

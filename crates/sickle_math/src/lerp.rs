@@ -1,5 +1,5 @@
 use bevy::{
-    render::color::Color,
+    color::{Color, Mix},
     ui::{UiRect, Val},
 };
 
@@ -31,12 +31,7 @@ impl Lerp64 for f64 {
 
 impl Lerp for Color {
     fn lerp(&self, to: Self, t: f32) -> Self {
-        Color::rgba(
-            self.r().lerp(to.r(), t).clamp(0., 1.),
-            self.g().lerp(to.g(), t).clamp(0., 1.),
-            self.b().lerp(to.b(), t).clamp(0., 1.),
-            self.a().lerp(to.a(), t).clamp(0., 1.),
-        )
+        self.mix(&to, t)
     }
 }
 

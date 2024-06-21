@@ -1,4 +1,4 @@
-use bevy::{ecs::system::CommandQueue, prelude::*, ui::FocusPolicy, window::PrimaryWindow};
+use bevy::{ecs::world::CommandQueue, prelude::*, ui::FocusPolicy, window::PrimaryWindow};
 
 use sickle_macros::UiContext;
 use sickle_ui_scaffold::prelude::*;

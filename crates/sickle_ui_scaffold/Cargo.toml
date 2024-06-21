@@ -12,6 +12,6 @@ dev = ["bevy/dynamic_linking"]
 sickle_math = { path = "../sickle_math" }
 sickle_macros = { path = "../sickle_macros" }
 
-bevy = { version = "0.13" }
-bevy_reflect = { version = "0.13" }
+bevy = { path = "../../../../bevy" }
+bevy_reflect = { path = "../../../../bevy/crates/bevy_reflect" }
 serde = { version = "1.0", features = ["derive"] }

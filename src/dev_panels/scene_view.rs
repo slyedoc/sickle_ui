@@ -94,7 +94,9 @@ fn spawn_scene_view(
             .spawn((
                 Camera3dBundle {
                     camera: Camera {
-                        clear_color: Color::DARK_GRAY.into(),
+                        clear_color: ClearColorConfig::Custom(
+                            bevy::color::palettes::css::DARK_GRAY.into(),
+                        ),
                         order: 0,
                         target: image_handle.clone().into(),
                         ..default()
@@ -104,7 +106,7 @@ fn spawn_scene_view(
                     ..default()
                 },
                 FogSettings {
-                    color: Color::rgb(0.25, 0.25, 0.25),
+                    color: Color::srgb(0.25, 0.25, 0.25),
                     falloff: FogFalloff::Linear {
                         start: 7.0,
                         end: 12.0,
@@ -119,7 +121,7 @@ fn spawn_scene_view(
         let scene_light = commands
             .spawn((DirectionalLightBundle {
                 directional_light: DirectionalLight {
-                    color: Color::rgb(1., 0.953, 0.886),
+                    color: Color::srgb(1., 0.953, 0.886),
                     shadows_enabled: true,
                     ..default()
                 },
@@ -246,7 +248,7 @@ fn set_scene_view_cam_viewport(
         camera.is_active = true;
 
         if let RenderTarget::Image(render_texture) = camera.target.clone() {
-            let Some(texture) = images.get_mut(render_texture) else {
+            let Some(texture) = images.get_mut(&render_texture) else {
                 continue;
             };
 
@@ -373,7 +375,7 @@ fn update_scene_views(
 
             match settings.light {
                 0 => {
-                    light.color = Color::rgb(1., 0.953, 0.886);
+                    light.color = Color::srgb(1., 0.953, 0.886);
                     light.illuminance = 13500.;
                     ambient_light.brightness = 500.;
                     fog.falloff = FogFalloff::Linear {
@@ -382,7 +384,7 @@ fn update_scene_views(
                     };
                 }
                 1 => {
-                    light.color = Color::rgb(0.78, 0.76, 0.745);
+                    light.color = Color::srgb(0.78, 0.76, 0.745);
                     light.illuminance = 9000.;
                     ambient_light.brightness = 300.;
                     fog.falloff = FogFalloff::Linear {
@@ -391,7 +393,7 @@ fn update_scene_views(
                     };
                 }
                 2 => {
-                    light.color = Color::rgb(0.73, 0.90, 0.95); // Color::rgb(0.53, 0.8, 0.92);
+                    light.color = Color::srgb(0.73, 0.90, 0.95); // Color::rgb(0.53, 0.8, 0.92);
                     light.illuminance = 300.;
                     ambient_light.brightness = 5.;
                     fog.falloff = FogFalloff::Linear {

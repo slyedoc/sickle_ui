@@ -179,7 +179,7 @@ fn update_hierarchy_node_style(
         {
             let color = match hierarchy.selected {
                 Some(selected) => match hierarchy_node.entity == selected {
-                    true => Color::GRAY,
+                    true => Srgba::gray(0.5).into(),
                     false => Color::NONE,
                 },
                 None => Color::NONE,
@@ -207,7 +207,7 @@ fn spawn_hierarchy_level(
                 .style()
                 .margin(UiRect::left(Val::Px(10.)))
                 .border(UiRect::left(Val::Px(1.)))
-                .border_color(Color::rgba(0.98, 0.92, 0.84, 0.25));
+                .border_color(Color::srgba(0.98, 0.92, 0.84, 0.25));
         })
         .insert(HierarchyNode { hierarchy, entity });
 }
@@ -283,7 +283,7 @@ impl UiHierarchyExt for UiBuilder<'_, Entity> {
                                 .style()
                                 .border(UiRect::bottom(Val::Px(1.)))
                                 .margin(UiRect::bottom(Val::Px(10.)))
-                                .border_color(Color::ANTIQUE_WHITE);
+                                .border_color(bevy::color::palettes::css::ANTIQUE_WHITE.into());
 
                             panel.scroll_view(None, |scroll_view| {
                                 let node_container = scroll_view

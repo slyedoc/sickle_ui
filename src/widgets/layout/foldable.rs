@@ -227,10 +227,14 @@ impl Foldable {
         (
             Name::new(format!("Foldable [{}] - Button", name)),
             ButtonBundle {
-                background_color: Color::NONE.into(),
+                image: UiImage {
+                    color: Color::NONE,
+                    ..default()
+                },
                 focus_policy: FocusPolicy::Pass,
                 ..default()
             },
+            BackgroundColor(Color::NONE),
             TrackedInteraction::default(),
         )
     }
@@ -252,7 +256,7 @@ pub trait UiFoldableExt {
 
 impl UiFoldableExt for UiBuilder<'_, Entity> {
     /// A simple foldable panel.
-    /// 
+    ///
     /// ### PseudoState usage
     /// - `PseudoState::Folded` is used when the panel is folded
     /// - `PseudoState::Empty` is used when the folded panel is set to be empty. This is used for styling its icon

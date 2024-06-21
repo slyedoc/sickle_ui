@@ -594,6 +594,10 @@ impl Dropdown {
         (
             Name::new("Dropdown"),
             ButtonBundle {
+                image: UiImage {
+                    color: Color::NONE,
+                    ..default()
+                },
                 style: Style {
                     flex_direction: FlexDirection::Row,
                     overflow: Overflow::visible(),
@@ -601,6 +605,7 @@ impl Dropdown {
                 },
                 ..default()
             },
+            BackgroundColor(Color::NONE),
             TrackedInteraction::default(),
             LockedStyleAttributes::from_vec(vec![
                 LockableStyleAttribute::FlexDirection,
@@ -626,9 +631,14 @@ impl Dropdown {
         (
             Name::new(format!("Option {}", option)),
             ButtonBundle {
+                image: UiImage {
+                    color: Color::NONE,
+                    ..default()
+                },
                 focus_policy: FocusPolicy::Pass,
                 ..default()
             },
+            BackgroundColor(Color::NONE),
             TrackedInteraction::default(),
             LockedStyleAttributes::lock(LockableStyleAttribute::FocusPolicy),
         )

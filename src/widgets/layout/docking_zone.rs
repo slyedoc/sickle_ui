@@ -1,5 +1,5 @@
 use bevy::{
-    ecs::system::{Command, CommandQueue},
+    ecs::world::{Command, CommandQueue},
     prelude::*,
     ui::{FocusPolicy, RelativeCursorPosition},
 };
@@ -744,7 +744,7 @@ impl DockingZoneHighlight {
     }
 
     fn visible_style(style_builder: &mut StyleBuilder, theme_data: &ThemeData) {
-        style_builder.background_color(theme_data.colors().accent(Accent::Outline).with_a(0.2));
+        style_builder.background_color(theme_data.colors().accent(Accent::Outline).with_alpha(0.2));
     }
 
     fn bundle(zone: Entity) -> impl Bundle {
@@ -808,7 +808,7 @@ pub trait UiDockingZoneExt {
 
 impl UiDockingZoneExt for UiBuilder<'_, Entity> {
     /// A flexible docking zone, able to receive `FloatingPanels` and dock them in its `TabContainer`
-    /// 
+    ///
     /// ### PseudoState usage
     /// - `PseudoState::Visible` is used by its `DockingZoneHighlight`
     fn docking_zone(

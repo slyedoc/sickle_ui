@@ -279,9 +279,14 @@ impl MenuItem {
                     overflow: Overflow::visible(),
                     ..default()
                 },
+                image: UiImage {
+                    color: Color::NONE,
+                    ..default()
+                },
                 focus_policy: bevy::ui::FocusPolicy::Pass,
                 ..default()
             },
+            BackgroundColor(Color::NONE),
             TrackedInteraction::default(),
             LockedStyleAttributes::from_vec(vec![
                 LockableStyleAttribute::FocusPolicy,

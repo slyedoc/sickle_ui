@@ -509,8 +509,8 @@ impl ScrollView {
             .border_color(colors.accent(Accent::Shadow))
             .animated()
             .background_color(AnimatedVals {
-                idle: colors.accent(Accent::Tertiary).with_a(0.5),
-                hover: colors.accent(Accent::Tertiary).with_a(0.8).into(),
+                idle: colors.accent(Accent::Tertiary).with_alpha(0.5),
+                hover: colors.accent(Accent::Tertiary).with_alpha(0.8).into(),
                 press: colors.accent(Accent::Tertiary).into(),
                 ..default()
             })
@@ -522,8 +522,8 @@ impl ScrollView {
             .border_color(colors.accent(Accent::Shadow))
             .animated()
             .background_color(AnimatedVals {
-                idle: colors.accent(Accent::Tertiary).with_a(0.5),
-                hover: colors.accent(Accent::Tertiary).with_a(0.8).into(),
+                idle: colors.accent(Accent::Tertiary).with_alpha(0.5),
+                hover: colors.accent(Accent::Tertiary).with_alpha(0.8).into(),
                 press: colors.accent(Accent::Tertiary).into(),
                 ..default()
             })
@@ -705,7 +705,7 @@ impl ScrollView {
         (
             Name::new("Scroll Bar Handle"),
             ButtonBundle {
-                style: Style {
+                style: Style {                    
                     width: match axis {
                         ScrollAxis::Horizontal => Val::Auto,
                         ScrollAxis::Vertical => Val::Percent(100.),
@@ -716,8 +716,13 @@ impl ScrollView {
                     },
                     ..default()
                 },
+                image: UiImage{
+                    color: Color::NONE,
+                    ..default()
+                },
                 ..default()
             },
+            BackgroundColor(Color::NONE),
             TrackedInteraction::default(),
             Draggable::default(),
             RelativeCursorPosition::default(),

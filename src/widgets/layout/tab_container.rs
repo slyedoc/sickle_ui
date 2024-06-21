@@ -1,4 +1,4 @@
-use bevy::{ecs::system::Command, prelude::*, ui::RelativeCursorPosition};
+use bevy::{ecs::world::Command, prelude::*, ui::RelativeCursorPosition};
 
 use sickle_macros::UiContext;
 use sickle_ui_scaffold::prelude::*;

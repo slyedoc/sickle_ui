@@ -388,10 +388,12 @@ impl ResizeHandles {
                         match parent_style.overflow.x {
                             OverflowAxis::Visible => resize_spacing.pullback,
                             OverflowAxis::Clip => 0.,
+                            OverflowAxis::Hidden => 0.,
                         },
                         match parent_style.overflow.y {
                             OverflowAxis::Visible => resize_spacing.pullback,
                             OverflowAxis::Clip => 0.,
+                            OverflowAxis::Hidden => 0.,
                         },
                     )
                 } else {
@@ -665,9 +667,14 @@ impl ResizeHandles {
                     position_type: PositionType::Absolute,
                     ..default()
                 },
+                image: UiImage {
+                    color: Color::NONE,
+                    ..default()
+                },
                 focus_policy: bevy::ui::FocusPolicy::Pass,
                 ..default()
             },
+            BackgroundColor(Color::NONE),
             TrackedInteraction::default(),
             Draggable::default(),
             RelativeCursorPosition::default(),
@@ -689,9 +696,9 @@ pub trait UiResizeHandlesExt {
 }
 
 impl UiResizeHandlesExt for UiBuilder<'_, Entity> {
-    /// A set of handles that can be dragged for resizing. Actual resize implementation is up to 
+    /// A set of handles that can be dragged for resizing. Actual resize implementation is up to
     /// widgets that incorporate these handles. See e.g. FloatingPanel, SizedZone.
-    /// 
+    ///
     /// ### PseudoState usage
     /// - `PseudoState::Resizable(_)` states are used to indicate which direction the container is resizable in.
     fn resize_handles(

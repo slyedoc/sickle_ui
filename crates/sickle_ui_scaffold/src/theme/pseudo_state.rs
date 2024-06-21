@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use bevy::{prelude::*, render::view::VisibilitySystems};
+use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use crate::{ui_commands::ManagePseudoStateExt, CardinalDirection};
@@ -18,7 +18,8 @@ impl Plugin for AutoPseudoStatePlugin {
         .add_systems(
             PostUpdate,
             propagate_visibility_to_pseudo_state
-                .after(VisibilitySystems::VisibilityPropagate)
+                // TODO: This is a regression that may cause a frame delay in applying the state
+                // .after(VisibilitySystems::VisibilityPropagate)
                 .before(ThemeUpdate),
         );
     }

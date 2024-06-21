@@ -88,23 +88,24 @@ impl ThemeTestBox {
                 .width(Val::Px(100.))
                 .height(Val::Px(100.));
 
-            base_style
-                .interactive()
-                .border_color(InteractiveVals::new(Color::DARK_GRAY).hover(Color::BEIGE));
+            base_style.interactive().border_color(
+                InteractiveVals::new(bevy::color::palettes::css::DARK_GRAY.into())
+                    .hover(bevy::color::palettes::css::BEIGE.into()),
+            );
 
             base_style
                 .switch_target(TEST_CONTEXT)
-                .background_color(Color::BLACK);
+                .background_color(bevy::color::palettes::css::BLACK);
         });
 
         let checked_style = PseudoTheme::build(vec![PseudoState::Checked], |checked_style| {
-            checked_style.background_color(Color::GRAY);
+            checked_style.background_color(bevy::color::palettes::css::GRAY);
         });
 
         let checked_empty_style = PseudoTheme::build(
             vec![PseudoState::Checked, PseudoState::Empty],
             |checked_empty_style| {
-                checked_empty_style.background_color(Color::SEA_GREEN);
+                checked_empty_style.background_color(bevy::color::palettes::css::SEA_GREEN);
             },
         );
         let checked_empty_selected_style = PseudoTheme::build(
@@ -114,7 +115,7 @@ impl ThemeTestBox {
                 PseudoState::Selected,
             ],
             |checked_empty_selected_style| {
-                checked_empty_selected_style.background_color(Color::RED);
+                checked_empty_selected_style.background_color(bevy::color::palettes::css::RED);
             },
         );
 
@@ -148,12 +149,12 @@ impl ThemeTestBox {
         );
         let color_bundle = AnimatedVals {
             idle: data.colors().background,
-            hover: Color::rgb(0.5, 0.5, 1.).into(),
-            press: Color::GREEN.into(),
-            cancel: Color::RED.into(),
-            hover_alt: Color::GOLD.into(),
-            idle_alt: Color::rgb(0.5, 0.5, 1.).into(),
-            press_alt: Color::rgb(0.5, 1., 0.5).into(),
+            hover: Color::srgb(0.5, 0.5, 1.).into(),
+            press: Some(bevy::color::palettes::css::GREEN.into()),
+            cancel: Some(bevy::color::palettes::css::RED.into()),
+            hover_alt: Some(bevy::color::palettes::css::GOLD.into()),
+            idle_alt: Color::srgb(0.5, 0.5, 1.).into(),
+            press_alt: Color::srgb(0.5, 1., 0.5).into(),
             enter_from: Color::WHITE.into(),
             ..default()
         };
@@ -170,7 +171,7 @@ impl ThemeTestBox {
             .hover(0.3, Ease::InOutExpo, 0.3, 0.1, AnimationLoop::PingPong(3))
             .pressed_from(pressed);
 
-        builder.border_color(Color::ALICE_BLUE);
+        builder.border_color(bevy::color::palettes::css::ALICE_BLUE);
 
         builder
             .animated()
@@ -180,7 +181,10 @@ impl ThemeTestBox {
         builder
             .switch_target(TEST_CONTEXT)
             .interactive()
-            .background_color(InteractiveVals::new(Color::DARK_GRAY).hover(Color::BEIGE));
+            .background_color(
+                InteractiveVals::new(bevy::color::palettes::css::DARK_GRAY.into())
+                    .hover(bevy::color::palettes::css::BEIGE.into()),
+            );
     }
 }
 
@@ -305,7 +309,7 @@ fn setup(
         |container| {
             container
                 .style()
-                .background_color(Color::rgb(0.7, 0.7, 0.7));
+                .background_color(Color::srgb(0.7, 0.7, 0.7));
 
             container
                 .sized_zone(
@@ -319,7 +323,7 @@ fn setup(
                 )
                 .style()
                 .border(UiRect::right(Val::Px(4.)))
-                .background_color(Color::rgb(0.15, 0.155, 0.16));
+                .background_color(Color::srgb(0.15, 0.155, 0.16));
 
             container.sized_zone(
                 SizedZoneConfig {
@@ -408,14 +412,18 @@ fn spawn_test_content(container: &mut UiBuilder<'_, Entity>) {
 
                                     row.spawn((
                                         ButtonBundle {
+                                            image: UiImage {
+                                                color: Color::NONE,
+                                                ..default()
+                                            },
                                             style: Style {
                                                 width: Val::Px(100.),
                                                 height: Val::Px(100.),
                                                 ..default()
                                             },
-                                            background_color: Color::BISQUE.into(),
                                             ..default()
                                         },
+                                        BackgroundColor(bevy::color::palettes::css::BISQUE.into()),
                                         ThemeTestBoxToggle,
                                     ));
                                 });
@@ -424,7 +432,7 @@ fn spawn_test_content(container: &mut UiBuilder<'_, Entity>) {
                     },
                 )
                 .style()
-                .background_color(Color::rgb(0.3, 0.3, 0.3));
+                .background_color(Color::srgb(0.3, 0.3, 0.3));
             sized_zone.sized_zone(
                 SizedZoneConfig {
                     size: 20.,
@@ -433,7 +441,7 @@ fn spawn_test_content(container: &mut UiBuilder<'_, Entity>) {
                 |sized_zone| {
                     sized_zone
                         .style()
-                        .background_color(Color::rgb(0.3, 0.3, 0.3));
+                        .background_color(Color::srgb(0.3, 0.3, 0.3));
                 },
             );
             sized_zone.sized_zone(
@@ -444,7 +452,7 @@ fn spawn_test_content(container: &mut UiBuilder<'_, Entity>) {
                 |sized_zone| {
                     sized_zone
                         .style()
-                        .background_color(Color::rgb(0.3, 0.3, 0.3));
+                        .background_color(Color::srgb(0.3, 0.3, 0.3));
                 },
             );
         },
@@ -463,7 +471,7 @@ fn spawn_test_content(container: &mut UiBuilder<'_, Entity>) {
                 |sized_zone| {
                     sized_zone
                         .style()
-                        .background_color(Color::rgb(0.5, 0.5, 0.5));
+                        .background_color(Color::srgb(0.5, 0.5, 0.5));
                 },
             );
             sized_zone.docking_zone_split(
@@ -489,7 +497,7 @@ fn spawn_test_content(container: &mut UiBuilder<'_, Entity>) {
                             },
                         )
                         .style()
-                        .background_color(Color::rgb(0.5, 0.5, 0.5));
+                        .background_color(Color::srgb(0.5, 0.5, 0.5));
                     zone_split
                         .docking_zone(
                             SizedZoneConfig {
@@ -507,7 +515,7 @@ fn spawn_test_content(container: &mut UiBuilder<'_, Entity>) {
                             },
                         )
                         .style()
-                        .background_color(Color::rgb(0.5, 0.5, 0.5));
+                        .background_color(Color::srgb(0.5, 0.5, 0.5));
                     zone_split
                         .docking_zone(
                             SizedZoneConfig {
@@ -525,7 +533,7 @@ fn spawn_test_content(container: &mut UiBuilder<'_, Entity>) {
                             },
                         )
                         .style()
-                        .background_color(Color::rgb(0.5, 0.5, 0.5));
+                        .background_color(Color::srgb(0.5, 0.5, 0.5));
                 },
             );
             sized_zone.sized_zone(
@@ -536,7 +544,7 @@ fn spawn_test_content(container: &mut UiBuilder<'_, Entity>) {
                 |sized_zone| {
                     sized_zone
                         .style()
-                        .background_color(Color::rgb(0.5, 0.5, 0.5));
+                        .background_color(Color::srgb(0.5, 0.5, 0.5));
                 },
             );
         },
@@ -555,7 +563,7 @@ fn spawn_test_content(container: &mut UiBuilder<'_, Entity>) {
                 |sized_zone| {
                     sized_zone
                         .style()
-                        .background_color(Color::rgb(0.7, 0.7, 0.7));
+                        .background_color(Color::srgb(0.7, 0.7, 0.7));
                 },
             );
             sized_zone.sized_zone(
@@ -566,7 +574,7 @@ fn spawn_test_content(container: &mut UiBuilder<'_, Entity>) {
                 |sized_zone| {
                     sized_zone
                         .style()
-                        .background_color(Color::rgb(0.7, 0.7, 0.7));
+                        .background_color(Color::srgb(0.7, 0.7, 0.7));
                 },
             );
         },

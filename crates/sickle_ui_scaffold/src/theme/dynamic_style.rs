@@ -11,7 +11,8 @@ pub struct DynamicStylePlugin;
 
 impl Plugin for DynamicStylePlugin {
     fn build(&self, app: &mut App) {
-        app.configure_sets(
+        app
+        .configure_sets(
             PostUpdate,
             DynamicStylePostUpdate
                 .after(CustomThemeUpdate)

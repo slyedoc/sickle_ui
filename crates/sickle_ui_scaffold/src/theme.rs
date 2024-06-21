@@ -391,7 +391,7 @@ where
     C: DefaultTheme,
 {
     fn build(&self, app: &mut App) {
-        if let Some(mut registry) = app.world.get_resource_mut::<ThemeRegistry>() {
+        if let Some(mut registry) = app.world_mut().get_resource_mut::<ThemeRegistry>() {
             registry.add::<C>();
         } else {
             app.insert_resource(ThemeRegistry::new_with::<C>());

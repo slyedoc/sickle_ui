@@ -6,13 +6,13 @@ use bevy::{
         component::ComponentInfo,
         entity::Entity,
         query::With,
-        system::{Command, Commands, EntityCommand, EntityCommands},
-        world::{Mut, World},
+        system::{Commands, EntityCommand, EntityCommands},
+        world::{Command, World},
     },
     hierarchy::{Children, Parent},
     log::{info, warn},
     text::{Text, TextSection, TextStyle},
-    ui::{Interaction, UiSurface},
+    ui::Interaction,
     window::{CursorIcon, PrimaryWindow, Window},
 };
 
@@ -288,13 +288,13 @@ impl LogHierarchyExt for EntityCommands<'_> {
 
 pub struct ResetChildrenInUiSurface;
 impl EntityCommand for ResetChildrenInUiSurface {
-    fn apply(self, id: Entity, world: &mut World) {
-        world.resource_scope(|world, mut ui_surface: Mut<UiSurface>| {
-            let Ok(children) = world.query::<&Children>().get(world, id) else {
-                return;
-            };
-            ui_surface.update_children(id, children);
-        });
+    fn apply(self, _id: Entity, _world: &mut World) {
+        // world.resource_scope(|world, mut ui_surface: Mut<UiSurface>| {
+        //     let Ok(children) = world.query::<&Children>().get(world, id) else {
+        //         return;
+        //     };
+        //     ui_surface.update_children(id, children);
+        // });
     }
 }
 

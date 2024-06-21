@@ -821,7 +821,14 @@ impl FloatingPanel {
     fn title_container(panel: Entity) -> impl Bundle {
         (
             Name::new("Title Container"),
-            ButtonBundle::default(),
+            ButtonBundle {
+                image: UiImage {
+                    color: Color::NONE,
+                    ..default()
+                },
+                ..default()
+            },
+            BackgroundColor(Color::NONE),
             FloatingPanelTitle { panel },
             TrackedInteraction::default(),
             Draggable::default(),
@@ -832,7 +839,14 @@ impl FloatingPanel {
     fn fold_button(panel: Entity) -> impl Bundle {
         (
             Name::new("Fold Button"),
-            ButtonBundle::default(),
+            ButtonBundle {
+                image: UiImage {
+                    color: Color::NONE,
+                    ..default()
+                },
+                ..default()
+            },
+            BackgroundColor(Color::NONE),
             ContentSize::default(),
             TrackedInteraction::default(),
             FloatingPanelFoldButton { panel },
@@ -842,7 +856,14 @@ impl FloatingPanel {
     fn drag_handle() -> impl Bundle {
         (
             Name::new("Drag Handle"),
-            ButtonBundle::default(),
+            ButtonBundle {
+                image: UiImage {
+                    color: Color::NONE,
+                    ..default()
+                },
+                ..default()
+            },
+            BackgroundColor(Color::NONE),
             TrackedInteraction::default(),
             Draggable::default(),
             RelativeCursorPosition::default(),
@@ -870,7 +891,14 @@ impl FloatingPanel {
     fn close_button(panel: Entity) -> impl Bundle {
         (
             Name::new("Close Button"),
-            ButtonBundle::default(),
+            ButtonBundle {
+                image: UiImage {
+                    color: Color::NONE,
+                    ..default()
+                },
+                ..default()
+            },
+            BackgroundColor(Color::NONE),
             ContentSize::default(),
             TrackedInteraction::default(),
             FloatingPanelCloseButton { panel },
@@ -921,7 +949,7 @@ pub trait UiFloatingPanelExt {
 
 impl UiFloatingPanelExt for UiBuilder<'_, Entity> {
     /// A floating panel that can be optionally dragable, foldable, and closable.
-    /// 
+    ///
     /// ### PseudoState usage
     /// - `PseudoState::Folded` is used when the panel is folded
     /// - `PseudoState::Resizable(_)` is transiently used by its resize handles

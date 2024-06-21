@@ -20,7 +20,7 @@ impl Default for LabelConfig {
     fn default() -> Self {
         Self {
             label: "Label".into(),
-            color: Color::ANTIQUE_WHITE,
+            color: bevy::color::palettes::css::ANTIQUE_WHITE.into(),
             margin: Default::default(),
             wrap: FlexWrap::NoWrap,
             flex_grow: 0.,
