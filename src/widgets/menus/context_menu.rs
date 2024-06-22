@@ -183,7 +183,7 @@ fn generate_context_menu(world: &mut World) {
         }
 
         warn!(
-            "Cannot create context menu for entity {:?}. No generators implemented!",
+            "Cannot create context menu for entity {}. No generators implemented!",
             entity
         );
         return;
@@ -193,7 +193,7 @@ fn generate_context_menu(world: &mut World) {
 
     let mut queue = CommandQueue::default();
     let mut commands = Commands::new(&mut queue, world);
-    let name = format!("Context Menu of [{:?}]", entity);
+    let name = format!("Context Menu of [{}]", entity);
 
     let container_id = commands
         .ui_builder(root_node)

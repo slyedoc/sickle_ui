@@ -218,7 +218,7 @@ fn cleanup_despawned_scene_views(
 ) {
     for entity in q_removed_scene_views.read() {
         let Some(data) = active_scene_views.scene_views.remove(&entity) else {
-            error!("Tried to clean up untracked scene view {:?}", entity);
+            error!("Tried to clean up untracked scene view {}", entity);
             continue;
         };
 

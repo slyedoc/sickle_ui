@@ -29,7 +29,7 @@ impl EntityCommand for SetZIndex {
 
         let Some(mut z_index) = world.get_mut::<ZIndex>(entity) else {
             warn!(
-                "Failed to set z index on entity {:?}: No ZIndex component found!",
+                "Failed to set z index on entity {}: No ZIndex component found!",
                 entity
             );
             return;
@@ -100,7 +100,7 @@ impl EntityCommand for SetImage {
 
         let Some(mut image) = world.get_mut::<UiImage>(entity) else {
             warn!(
-                "Failed to set image on entity {:?}: No UiImage component found!",
+                "Failed to set image on entity {}: No UiImage component found!",
                 entity
             );
             return;
@@ -153,7 +153,7 @@ impl EntityCommand for SetImageTint {
 
         let Some(mut image) = world.get_mut::<UiImage>(entity) else {
             warn!(
-                "Failed to set image tint on entity {:?}: No UiImage component found!",
+                "Failed to set image tint on entity {}: No UiImage component found!",
                 entity
             );
             return;
@@ -178,7 +178,7 @@ impl EntityCommand for SetImageFlip {
 
         let Some(mut image) = world.get_mut::<UiImage>(entity) else {
             warn!(
-                "Failed to set image flip on entity {:?}: No UiImage component found!",
+                "Failed to set image flip on entity {}: No UiImage component found!",
                 entity
             );
             return;
@@ -235,7 +235,7 @@ impl EntityCommand for SetFluxInteractionEnabled {
 
         let Some(mut flux_interaction) = world.get_mut::<FluxInteraction>(entity) else {
             warn!(
-                "Failed to set flux interaction on entity {:?}: No FluxInteraction component found!",
+                "Failed to set flux interaction on entity {}: No FluxInteraction component found!",
                 entity
             );
             return;
@@ -458,7 +458,7 @@ impl EntityCommand for SetAbsolutePosition {
         let offset = if let Some(parent) = world.get::<Parent>(entity) {
             let Some(parent_node) = world.get::<Node>(parent.get()) else {
                 warn!(
-                    "Failed to set position on entity {:?}: Parent has no Node component!",
+                    "Failed to set position on entity {}: Parent has no Node component!",
                     entity
                 );
                 return;
@@ -467,7 +467,7 @@ impl EntityCommand for SetAbsolutePosition {
             let size = parent_node.unrounded_size();
             let Some(parent_transform) = world.get::<GlobalTransform>(parent.get()) else {
                 warn!(
-                    "Failed to set position on entity {:?}: Parent has no GlobalTransform component!",
+                    "Failed to set position on entity {}: Parent has no GlobalTransform component!",
                     entity
                 );
                 return;
@@ -480,7 +480,7 @@ impl EntityCommand for SetAbsolutePosition {
 
         let Some(mut style) = world.get_mut::<Style>(entity) else {
             warn!(
-                "Failed to set position on entity {:?}: No Style component found!",
+                "Failed to set position on entity {}: No Style component found!",
                 entity
             );
             return;
@@ -551,7 +551,9 @@ impl EntityCommand for SetIcon {
             IconData::FontCodepoint(font, codepoint, color, font_size) => {
                 // TODO: Check lock on text / font once it is available
 
-                world.entity_mut(entity).insert(BackgroundColor(Color::NONE));
+                world
+                    .entity_mut(entity)
+                    .insert(BackgroundColor(Color::NONE));
 
                 // SetBackgroundColor {
                 //     background_color: Color::NONE,
@@ -599,7 +601,7 @@ impl EntityCommand for SetFont {
 
         let Some(mut text) = world.get_mut::<Text>(entity) else {
             warn!(
-                "Failed to set font on entity {:?}: No Text component found!",
+                "Failed to set font on entity {}: No Text component found!",
                 entity
             );
             return;
@@ -620,7 +622,7 @@ impl EntityCommand for SetFontSize {
     fn apply(self, entity: Entity, world: &mut World) {
         let Some(mut text) = world.get_mut::<Text>(entity) else {
             warn!(
-                "Failed to set font on entity {:?}: No Text component found!",
+                "Failed to set font on entity {}: No Text component found!",
                 entity
             );
             return;
@@ -643,7 +645,7 @@ impl EntityCommand for SetSizedFont {
 
         let Some(mut text) = world.get_mut::<Text>(entity) else {
             warn!(
-                "Failed to set sized font on entity {:?}: No Text component found!",
+                "Failed to set sized font on entity {}: No Text component found!",
                 entity
             );
             return;
@@ -665,7 +667,7 @@ impl EntityCommand for SetFontColor {
     fn apply(self, entity: Entity, world: &mut World) {
         let Some(mut text) = world.get_mut::<Text>(entity) else {
             warn!(
-                "Failed to set font on entity {:?}: No Text component found!",
+                "Failed to set font on entity {}: No Text component found!",
                 entity
             );
             return;
@@ -743,7 +745,7 @@ impl EntityCommand for SetScale {
 
         let Some(mut transform) = world.get_mut::<Transform>(entity) else {
             warn!(
-                "Failed to set scale on entity {:?}: No Transform component found!",
+                "Failed to set scale on entity {}: No Transform component found!",
                 entity
             );
             return;
@@ -770,7 +772,7 @@ impl EntityCommand for SetSize {
 
         let Some(mut style) = world.get_mut::<Style>(entity) else {
             warn!(
-                "Failed to set size on entity {:?}: No Style component found!",
+                "Failed to set size on entity {}: No Style component found!",
                 entity
             );
             return;

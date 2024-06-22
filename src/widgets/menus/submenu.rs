@@ -99,7 +99,7 @@ fn open_submenu_on_hover(
         if *interaction == FluxInteraction::PointerEnter {
             let Ok((entity, mut container, mut state)) = q_containers.get_mut(submenu.container)
             else {
-                warn!("Submenu {:?} is missing its container", entity);
+                warn!("Submenu {} is missing its container", entity);
                 continue;
             };
 

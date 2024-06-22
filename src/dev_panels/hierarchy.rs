@@ -55,7 +55,7 @@ fn initialize_hierarchy_tree_view(
     for (entity, node_container) in &q_hierarchy_nodes {
         let Ok(hierarchy) = q_hierarchy.get(node_container.hierarchy) else {
             warn!(
-                "Hierarchy node container {:?} missing main container {:?}",
+                "Hierarchy node container {} missing main container {}",
                 entity, node_container.hierarchy
             );
             continue;
@@ -196,8 +196,8 @@ fn spawn_hierarchy_level(
     q_name: &Query<&Name>,
 ) {
     let name = match q_name.get(entity) {
-        Ok(name) => format!("[{:?}] {}", entity, name),
-        Err(_) => format!("[{:?}]", entity),
+        Ok(name) => format!("[{}] {}", entity, name),
+        Err(_) => format!("[{}]", entity),
     };
 
     // TODO: move style to theme
@@ -317,7 +317,7 @@ impl UiHierarchyExt for UiBuilder<'_, Entity> {
             );
 
             column.commands().ui_builder(main_zone).insert((
-                Name::new(format!("Hierarchy of [{:?}]", root_entity)),
+                Name::new(format!("Hierarchy of [{}]", root_entity)),
                 HierarchyContainer {
                     root: root_entity,
                     selected: None,

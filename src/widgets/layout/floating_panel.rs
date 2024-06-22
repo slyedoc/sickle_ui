@@ -124,7 +124,7 @@ fn process_panel_fold_pressed(
     for (entity, button, interaction) in &q_buttons {
         if *interaction == FluxInteraction::Released {
             let Ok(mut config) = q_panel_configs.get_mut(button.panel) else {
-                warn!("Missing floating panel config for fold button {:?}", entity);
+                warn!("Missing floating panel config for fold button {}", entity);
                 continue;
             };
 

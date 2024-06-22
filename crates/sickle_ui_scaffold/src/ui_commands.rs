@@ -34,7 +34,7 @@ impl EntityCommand for SetTextSections {
     fn apply(self, entity: Entity, world: &mut World) {
         let Some(mut text) = world.get_mut::<Text>(entity) else {
             warn!(
-                "Failed to set text sections on entity {:?}: No Text component found!",
+                "Failed to set text sections on entity {}: No Text component found!",
                 entity
             );
             return;
@@ -64,7 +64,7 @@ impl EntityCommand for SetText {
     fn apply(self, entity: Entity, world: &mut World) {
         let Some(mut text) = world.get_mut::<Text>(entity) else {
             warn!(
-                "Failed to set text on entity {:?}: No Text component found!",
+                "Failed to set text on entity {}: No Text component found!",
                 entity
             );
             return;
@@ -97,7 +97,7 @@ impl EntityCommand for UpdateText {
     fn apply(self, entity: Entity, world: &mut World) {
         let Some(mut text) = world.get_mut::<Text>(entity) else {
             warn!(
-                "Failed to set text on entity {:?}: No Text component found!",
+                "Failed to set text on entity {}: No Text component found!",
                 entity
             );
             return;
@@ -193,8 +193,8 @@ impl EntityCommand for LogHierarchy {
 
         let padding = padding_parts.join("");
         let name = match world.get::<Name>(id) {
-            Some(name) => format!("[{:?}] {}", id, name),
-            None => format!("Entity {:?}", id),
+            Some(name) => format!("[{}] {}", id, name),
+            None => format!("Entity {}", id),
         };
         let entity_text = format!("{}  {}══ {} ", padding, prefix, name);
         let has_children = children_ids.len() > 0;
@@ -375,7 +375,7 @@ where
 
         if themes.len() == 0 {
             warn!(
-                "Theme missing for component {} on entity: {:?}",
+                "Theme missing for component {} on entity: {}",
                 std::any::type_name::<C>(),
                 entity
             );

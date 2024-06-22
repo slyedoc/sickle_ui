@@ -79,7 +79,7 @@ fn preset_sized_zone_flex_layout(
 
     for (sized_zone, parent) in static_zones {
         let Ok(parent_style) = q_style.get(parent) else {
-            warn!("No Style found for sized zone parent {:?}!", parent);
+            warn!("No Style found for sized zone parent {}!", parent);
             continue;
         };
 
@@ -191,7 +191,7 @@ fn update_sized_zone_resize_handles(
             for i in 0..child_count {
                 let Ok(style) = q_style.get(children[i]) else {
                     warn!(
-                        "Missing Style detected on Node {:?} during sized zone handle update.",
+                        "Missing Style detected on Node {} during sized zone handle update.",
                         children[i]
                     );
                     commands.entity(children[i]).log_hierarchy(None);
@@ -251,7 +251,7 @@ fn update_sized_zone_resize_handles(
                         ));
                     }
                     _ => warn!(
-                        "Invalid flex_direction detected on sized zone {:?}",
+                        "Invalid flex_direction detected on sized zone {}",
                         children[i]
                     ),
                 }
@@ -282,7 +282,7 @@ fn update_sized_zone_resize_handles(
                     })
                 else {
                     warn!(
-                        "Invalid flex_direction detected on sized zone {:?}",
+                        "Invalid flex_direction detected on sized zone {}",
                         zone_children[i]
                     );
                     continue;
@@ -365,8 +365,8 @@ fn update_sized_zone_on_resize(
 
         if parent != other_parent {
             warn!(
-                "Failed to resize sized zone: Neighbouring zones have different parents: {:?} <-> {:?}",
-                parent, other_parent
+                "Failed to resize sized zone: Neighbouring zones have different parents: {} <-> {}",
+                parent.get(), other_parent.get()
             );
             continue;
         }
@@ -382,8 +382,8 @@ fn update_sized_zone_on_resize(
 
         let Ok(node) = q_node.get(parent.get()) else {
             warn!(
-                "Cannot calculate sized zone pixel size: Entity {:?} has parent without Node!",
-                current_zone
+                "Cannot calculate sized zone pixel size: Entity {} has parent without Node!",
+                current_zone_id
             );
             continue;
         };
@@ -481,7 +481,7 @@ fn fit_sized_zones_on_window_resize(
 
     for parent in parents {
         let Ok(parent_node) = q_node.get(parent) else {
-            warn!("Sized zone parent {:?} doesn't have a Node!", parent);
+            warn!("Sized zone parent {} doesn't have a Node!", parent);
             continue;
         };
 
@@ -776,10 +776,10 @@ pub trait UiSizedZoneExt {
 impl UiSizedZoneExt for UiBuilder<'_, Entity> {
     /// A sized zone, that can be resized by dragging its edge handle.
     /// Nested sized zones automatically change layout direction to fit the resizing axis.
-    /// 
+    ///
     /// ### PseudoState usage
     /// - `PseudoState::LayoutRow` and `PseudoState::LayoutColumn` are added automatically
-    /// - `PseudoState::FirstChild`, `PseudoState::LastChild`, `PseudoState::NthChild(i)`, 
+    /// - `PseudoState::FirstChild`, `PseudoState::LastChild`, `PseudoState::NthChild(i)`,
     /// `PseudoState::SingleChild`, `PseudoState::EvenChild`, and `PseudoState::OddChild`
     /// are added automatically
     /// - `PseudoState::Resizable(_)` is used transiently to configure the zone resize handles.

@@ -67,7 +67,7 @@ fn cleanup_empty_docking_zones(
 
         let Ok(parent) = q_parent.get(zone_ref.zone) else {
             warn!(
-                "Invalid docking zone detected: Zone {:?} doesn't have a Parent!",
+                "Invalid docking zone detected: Zone {} doesn't have a Parent!",
                 zone_ref.zone
             );
             commands.entity(zone_ref.zone).despawn_recursive();
@@ -160,7 +160,7 @@ fn cleanup_empty_docking_zone_splits(
 
         let Ok(parent) = q_parent.get(topmost_empty_split) else {
             warn!(
-                "DockingZoneSplitContainer {:?} has no Parent. This is not supported!",
+                "DockingZoneSplitContainer {} has no Parent. This is not supported!",
                 topmost_empty_split
             );
 
@@ -244,7 +244,7 @@ fn cleanup_shell_docking_zone_splits(
 
         let Ok(second_parent) = q_parent.get(parent_id) else {
             // The parent split zone doesn't have parent. It is a root node.
-            warn!("Docking zone split {:?} doesnt't have a parent!", parent_id);
+            warn!("Docking zone split {} doesnt't have a parent!", parent_id);
             continue;
         };
         let second_parent_id = second_parent.get();
@@ -255,7 +255,7 @@ fn cleanup_shell_docking_zone_splits(
         {
             // Zone split has no sized zone children, it shouldn't be here!
             warn!(
-                "Empty docking zone split {:?} detected after cleanup",
+                "Empty docking zone split {} detected after cleanup",
                 zone_split_id
             );
             continue;
@@ -414,13 +414,13 @@ fn handle_docking_zone_drop_zone_change(
 ) {
     for (entity, docking_zone, drop_zone, node, transform) in &q_docking_zones {
         let Ok(tab_container) = q_tab_container.get(docking_zone.tab_container) else {
-            warn!("Docking zone {:?} missing its tab container!", entity);
+            warn!("Docking zone {} missing its tab container!", entity);
             continue;
         };
 
         let Ok((tab_bar_node, bar_interaction)) = q_tab_bar.get(tab_container.bar_id()) else {
             warn!(
-                "Tab container {:?} missing its tab bar!",
+                "Tab container {} missing its tab bar!",
                 docking_zone.tab_container
             );
             continue;
@@ -548,7 +548,7 @@ impl Command for DockingZoneSplit {
             .get(world, self.docking_zone)
         else {
             error!(
-                "Tried to split entity {:?} when it isn't a valid DockingZone!",
+                "Tried to split entity {} when it isn't a valid DockingZone!",
                 self.docking_zone
             );
             return;
@@ -562,7 +562,7 @@ impl Command for DockingZoneSplit {
 
         let Some(_) = world.get::<TabContainer>(tab_container_id) else {
             error!(
-                "Tab container {:?} missing from docking zone {:?}",
+                "Tab container {} missing from docking zone {}",
                 tab_container_id, self.docking_zone
             );
             return;

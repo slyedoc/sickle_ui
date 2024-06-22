@@ -87,7 +87,7 @@ fn dock_panel_in_tab_container(
 
         let Ok(floating_panel) = q_floating_panel.get(dock_ref.floating_panel) else {
             warn!(
-                "Failed to dock floating panel {:?}: Not a FloatingPanel",
+                "Failed to dock floating panel {}: Not a FloatingPanel",
                 dock_ref.floating_panel
             );
             continue;
@@ -97,7 +97,7 @@ fn dock_panel_in_tab_container(
 
         let Ok(panel) = q_panel.get(panel_id) else {
             warn!(
-                "Failed to dock floating panel {:?}: Missing Panel {:?}",
+                "Failed to dock floating panel {}: Missing Panel {}",
                 dock_ref.floating_panel, panel_id
             );
             continue;
@@ -156,7 +156,7 @@ fn popout_panel_from_tab(
 
         let Ok(mut tab_container) = q_tab_container.get_mut(tab_contaier_id) else {
             warn!(
-                "Failed to remove Tab {:?}: {:?} is not a TabContainer!",
+                "Failed to remove Tab {}: {} is not a TabContainer!",
                 entity, tab_contaier_id,
             );
             continue;
@@ -175,7 +175,7 @@ fn popout_panel_from_tab(
 
         let panel_id = tab.panel;
         let Ok(panel) = q_panel.get(panel_id) else {
-            warn!("Cannot pop out panel {:?}: Not a Panel", panel_id);
+            warn!("Cannot pop out panel {}: Not a Panel", panel_id);
             continue;
         };
         let title = panel.title();
@@ -222,7 +222,7 @@ fn close_tab_on_context_menu_press(
         if menu_item.interacted() {
             let Ok(tab_data) = q_tab.get(context_menu.tab) else {
                 warn!(
-                    "Context menu {:?} refers to missing tab {:?}",
+                    "Context menu {} refers to missing tab {}",
                     entity, context_menu.tab
                 );
                 continue;
@@ -231,7 +231,7 @@ fn close_tab_on_context_menu_press(
             let tab_contaier_id = tab_data.container;
             let Ok(mut tab_container) = q_tab_container.get_mut(tab_contaier_id) else {
                 warn!(
-                    "Failed to remove Tab {:?}: {:?} is not a TabContainer!",
+                    "Failed to remove Tab {}: {} is not a TabContainer!",
                     entity, tab_contaier_id,
                 );
                 continue;
@@ -257,7 +257,7 @@ fn popout_tab_on_context_menu_press(
         if menu_item.interacted() {
             let Ok((tab, transform)) = q_tab.get(tab_ref.tab) else {
                 warn!(
-                    "Context menu tab reference {:?} refers to missing tab {:?}",
+                    "Context menu tab reference {} refers to missing tab {}",
                     entity, tab_ref.tab
                 );
                 continue;
@@ -265,7 +265,7 @@ fn popout_tab_on_context_menu_press(
 
             let Ok(container) = q_node.get(tab.container) else {
                 warn!(
-                    "Context menu tab reference {:?} refers to a tab without a container {:?}",
+                    "Context menu tab reference {} refers to a tab without a container {}",
                     entity, tab_ref.tab
                 );
                 continue;
@@ -369,17 +369,17 @@ fn handle_tab_dragging(
         let tab = q_tab.get(entity).unwrap();
 
         let Ok(container) = q_tab_container.get(tab.container) else {
-            warn!("Tried to drag orphan Tab {:?}", entity);
+            warn!("Tried to drag orphan Tab {}", entity);
             continue;
         };
 
         let Ok(bar_node) = q_tab_bar.get(container.bar) else {
-            error!("Tab container {:?} doesn't have a tab bar", tab.container);
+            error!("Tab container {} doesn't have a tab bar", tab.container);
             continue;
         };
 
         let Ok(children) = q_children.get(container.bar) else {
-            error!("Tab container has no tabs {:?}", tab.container);
+            error!("Tab container has no tabs {}", tab.container);
             continue;
         };
 
@@ -410,7 +410,7 @@ fn handle_tab_dragging(
                     .filter(|child| q_tab.get(**child).is_ok())
                     .position(|child| *child == entity)
                 else {
-                    error!("Tab {:?} isn't a child of its tab container bar", entity);
+                    error!("Tab {} isn't a child of its tab container bar", entity);
                     continue;
                 };
 
@@ -445,7 +445,7 @@ fn handle_tab_dragging(
                 };
 
                 let Some(placeholder) = tab.placeholder else {
-                    warn!("Tab {:?} missing placeholder", entity);
+                    warn!("Tab {} missing placeholder", entity);
                     continue;
                 };
 
@@ -512,7 +512,7 @@ fn handle_tab_dragging(
                 });
 
                 let Some(placeholder) = tab.placeholder else {
-                    warn!("Tab {:?} missing placeholder", entity);
+                    warn!("Tab {} missing placeholder", entity);
                     continue;
                 };
 
@@ -520,7 +520,7 @@ fn handle_tab_dragging(
                     children.iter().position(|child| *child == placeholder)
                 else {
                     error!(
-                        "Tab placeholder {:?} isn't a child of its tab container bar",
+                        "Tab placeholder {} isn't a child of its tab container bar",
                         entity
                     );
                     continue;
@@ -554,7 +554,7 @@ fn handle_tab_dragging(
                 });
 
                 let Some(placeholder) = tab.placeholder else {
-                    warn!("Tab {:?} missing placeholder", entity);
+                    warn!("Tab {} missing placeholder", entity);
                     continue;
                 };
 
@@ -769,7 +769,7 @@ impl Command for IncrementTabCount {
     fn apply(self, world: &mut World) {
         let Some(mut container) = world.get_mut::<TabContainer>(self.container) else {
             warn!(
-                "Failed to increment tab count: {:?} is not a TabContainer!",
+                "Failed to increment tab count: {} is not a TabContainer!",
                 self.container,
             );
             return;
@@ -1052,7 +1052,7 @@ impl UiTabContainerSubExt for UiBuilder<'_, (Entity, TabContainer)> {
     }
 
     /// Adds a tab to the TabContainer
-    /// 
+    ///
     /// ### PseudoState usage
     /// - `PseudoState::Selected` is added to the tab currently selected per TabContainer
     fn add_tab(

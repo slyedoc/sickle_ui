@@ -88,7 +88,7 @@ impl EntityCommand for UpdateLabelText {
     fn apply(self, entity: Entity, world: &mut World) {
         let Some(config) = world.get::<LabelConfig>(entity) else {
             warn!(
-                "Failed to set label text on entity {:?}: No LabelConfig component found!",
+                "Failed to set label text on entity {}: No LabelConfig component found!",
                 entity
             );
 
@@ -97,7 +97,7 @@ impl EntityCommand for UpdateLabelText {
         let style = config.text_style();
         let Some(mut text) = world.get_mut::<Text>(entity) else {
             warn!(
-                "Failed to set label text on entity {:?}: No Text component found!",
+                "Failed to set label text on entity {}: No Text component found!",
                 entity
             );
 
