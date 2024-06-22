@@ -11,6 +11,7 @@ use bevy::{
     },
     hierarchy::{Children, Parent},
     log::{info, warn},
+    state::state::{FreelyMutableState, NextState, States},
     text::{Text, TextSection, TextStyle},
     ui::Interaction,
     window::{CursorIcon, PrimaryWindow, Window},
@@ -586,5 +587,24 @@ impl ManagePseudoStateExt for EntityCommands<'_> {
         });
 
         self
+    }
+}
+
+pub trait UpdateStatesExt<'w, 's, 'a> {
+    fn next_state<C: States + FreelyMutableState>(&mut self, state: C);
+}
+
+impl<'w, 's, 'a> UpdateStatesExt<'w, 's, 'a> for Commands<'w, 's> {
+    fn next_state<C: States + FreelyMutableState>(&mut self, state: C) {
+        self.add(|world: &mut World| {
+            if let Some(mut old_state) = world.get_resource_mut::<NextState<C>>() {
+                old_state.set(state);
+            } else {
+                warn!(
+                    "Failed to set state: {}, state not initialized!",
+                    std::any::type_name::<C>()
+                );
+            }
+        });
     }
 }

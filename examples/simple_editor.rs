@@ -7,7 +7,7 @@ use sickle_ui::{
         scene_view::{SceneView, SceneViewPlugin, SpawnSceneViewPreUpdate, UiSceneViewExt},
     },
     prelude::*,
-    ui_commands::SetCursorExt,
+    ui_commands::{SetCursorExt, UpdateStatesExt},
     SickleUiPlugin,
 };
 
@@ -162,11 +162,8 @@ pub struct ThemeContrastSelect;
 fn setup(
     asset_server: Res<AssetServer>,
     mut icon_cache: ResMut<IconCache>,
-    // mut next_state: ResMut<NextState<Page>>,
     mut commands: Commands,
 ) {
-    // next_state.set(Page::Layout);
-
     // Workaround for disappearing icons when they are despawned and spawned back in during the same frame
     // Should be fixed in Bevy > 0.13
     let icons_to_cache: Vec<&str> = vec![
@@ -525,6 +522,8 @@ fn setup(
             .height(Val::Percent(100.))
             .background_color(Color::NONE);
     });
+
+    commands.next_state(Page::Layout);
 }
 
 fn exit_app_on_menu_item(
