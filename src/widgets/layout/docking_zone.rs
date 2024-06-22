@@ -1,5 +1,5 @@
 use bevy::{
-    ecs::world::{Command, CommandQueue},
+    ecs::world::Command,
     prelude::*,
     ui::{FocusPolicy, RelativeCursorPosition},
 };
@@ -613,9 +613,7 @@ impl Command for DockingZoneSplit {
         };
         sized_zone.set_size(new_container_size);
 
-        let mut queue = CommandQueue::default();
-        let mut commands = Commands::new(&mut queue, world);
-
+        let mut commands = world.commands();
         if inject_container {
             let new_parent_id = commands
                 .ui_builder(parent_id)
@@ -674,7 +672,6 @@ impl Command for DockingZoneSplit {
         }
 
         commands.entity(parent_id).reset_children_in_ui_surface();
-        queue.apply(world);
     }
 }
 

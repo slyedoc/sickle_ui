@@ -1,4 +1,4 @@
-use bevy::{ecs::world::CommandQueue, prelude::*};
+use bevy::prelude::*;
 
 use crate::prelude::*;
 
@@ -31,10 +31,8 @@ fn update_entity_component_list(
 ) {
     if let Some(selected) = selected_entity {
         if world.get_entity(selected).is_none() {
-            let mut queue = CommandQueue::default();
-            let mut commands = Commands::new(&mut queue, world);
-            commands.entity(container).despawn_descendants();
-            queue.apply(world);
+            world.commands().entity(container).despawn_descendants();
+
             return;
         }
 
@@ -44,22 +42,18 @@ fn update_entity_component_list(
             .map(UiUtils::simplify_component_name)
             .collect();
 
-        let mut queue = CommandQueue::default();
-        let mut commands = Commands::new(&mut queue, world);
-
         // TODO: Maybe re-use existing tags if they exist
-        commands.entity(container).despawn_descendants();
+        world.commands().entity(container).despawn_descendants();
+        let mut commands = world.commands();
         let mut builder = commands.ui_builder(container);
         for info in debug_infos.iter().cloned() {
             builder.entity_component_tag(info);
         }
-        queue.apply(world);
     } else {
-        let mut queue = CommandQueue::default();
-        let mut commands = Commands::new(&mut queue, world);
-        commands.entity(container).despawn_descendants();
-        queue.apply(world);
+        world.commands().entity(container).despawn_descendants();
     }
+
+    world.flush();
 }
 
 #[derive(Component, Debug, Reflect)]
