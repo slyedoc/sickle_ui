@@ -173,18 +173,25 @@ fn update_hierarchy_node_style(
     mut commands: Commands,
 ) {
     for (entity, hierarchy) in &q_hierarchies {
-        for (menu_item, hierarchy_node) in q_hierarchy_nodes
+        for (foldable, hierarchy_node) in q_hierarchy_nodes
             .iter()
             .filter(|(_, node)| node.hierarchy == entity)
         {
-            let color = match hierarchy.selected {
-                Some(selected) => match hierarchy_node.entity == selected {
-                    true => Srgba::gray(0.5).into(),
-                    false => Color::NONE,
-                },
-                None => Color::NONE,
-            };
-            commands.style(menu_item).background_color(color);
+            if let Some(selected) = hierarchy.selected {
+                if hierarchy_node.entity == selected {
+                    commands
+                        .entity(foldable)
+                        .add_pseudo_state(PseudoState::Selected);
+                } else {
+                    commands
+                        .entity(foldable)
+                        .remove_pseudo_state(PseudoState::Selected);
+                }
+            } else {
+                commands
+                    .entity(foldable)
+                    .remove_pseudo_state(PseudoState::Selected);
+            }
         }
     }
 }
@@ -200,15 +207,8 @@ fn spawn_hierarchy_level(
         Err(_) => format!("[{}]", entity),
     };
 
-    // TODO: move style to theme
     container
-        .foldable(name, false, false, |foldable| {
-            foldable
-                .style()
-                .margin(UiRect::left(Val::Px(10.)))
-                .border(UiRect::left(Val::Px(1.)))
-                .border_color(Color::srgba(0.98, 0.92, 0.84, 0.25));
-        })
+        .foldable(name, false, false, |_| {})
         .insert(HierarchyNode { hierarchy, entity });
 }
 
@@ -246,6 +246,37 @@ pub struct HierarchyContainer {
     component_list: Entity,
 }
 
+impl HierarchyContainer {
+    pub fn foldable_theme() -> Theme<Foldable> {
+        let base_theme = PseudoTheme::deferred(None, HierarchyContainer::primary_style);
+        let selected_theme = PseudoTheme::deferred(
+            vec![PseudoState::Selected],
+            HierarchyContainer::selected_style,
+        );
+
+        Theme::new(vec![base_theme, selected_theme])
+    }
+
+    fn primary_style(style_builder: &mut StyleBuilder, theme_data: &ThemeData) {
+        let theme_spacing = theme_data.spacing;
+        let colors = theme_data.colors();
+
+        style_builder.background_color(Color::NONE);
+
+        style_builder
+            .switch_target(Foldable::CONTAINER)
+            .margin(UiRect::left(Val::Px(theme_spacing.gaps.medium)))
+            .border(UiRect::left(Val::Px(theme_spacing.borders.extra_small)))
+            .border_color(colors.accent(Accent::OutlineVariant));
+    }
+
+    fn selected_style(style_builder: &mut StyleBuilder, theme_data: &ThemeData) {
+        let colors = theme_data.colors();
+
+        style_builder.background_color(colors.container(Container::Tertiary));
+    }
+}
+
 pub trait UiHierarchyExt {
     fn hierarchy_for(&mut self, root_entity: Entity) -> UiBuilder<Entity>;
 }
@@ -253,7 +284,9 @@ pub trait UiHierarchyExt {
 impl UiHierarchyExt for UiBuilder<'_, Entity> {
     fn hierarchy_for(&mut self, root_entity: Entity) -> UiBuilder<Entity> {
         self.column(|column| {
+            column.insert(HierarchyContainer::foldable_theme());
             column.style().width(Val::Percent(100.));
+
             let main_zone = column
                 .sized_zone(
                     SizedZoneConfig {
