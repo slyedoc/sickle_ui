@@ -232,17 +232,19 @@ impl RadioButton {
             .justify_content(JustifyContent::Center)
             .align_items(AlignItems::Center)
             .align_content(AlignContent::Center)
-            .size(Val::Px(theme_spacing.icons.small))
+            .size(Val::Px(
+                theme_spacing.inputs.radio_button.radiomark_outer_size,
+            ))
             .margin(UiRect::all(Val::Px(theme_spacing.gaps.small)))
-            .icon(
-                theme_data
-                    .icons
-                    .radio_button_unchecked
-                    .with(colors.on(On::SurfaceVariant), theme_spacing.icons.small),
-            )
+            .border(UiRect::all(Val::Px(
+                theme_spacing.inputs.radio_button.border_size,
+            )))
+            .border_radius(BorderRadius::all(Val::Px(
+                theme_spacing.inputs.radio_button.radiomark_outer_size,
+            )))
             .visibility(Visibility::Inherited)
             .animated()
-            .font_color(AnimatedVals {
+            .border_color(AnimatedVals {
                 idle: colors.on(On::SurfaceVariant),
                 hover: colors.on(On::Surface).into(),
                 ..default()
@@ -250,14 +252,22 @@ impl RadioButton {
             .copy_from(theme_data.interaction_animation);
 
         style_builder
+            .switch_target(RadioButton::RADIOMARK_BACKGROUND)
+            .animated()
+            .background_color(AnimatedVals {
+                idle: Color::NONE,
+                hover: colors.accent(Accent::Primary).into(),
+                ..default()
+            })
+            .copy_from(theme_data.interaction_animation);
+
+        style_builder
             .switch_target(RadioButton::RADIOMARK)
-            .size(Val::Px(theme_spacing.icons.small))
-            .icon(
-                theme_data
-                    .icons
-                    .radio_button_checked
-                    .with(colors.on(On::Surface), theme_spacing.icons.small),
-            );
+            .size(Val::Px(theme_spacing.inputs.radio_button.radiomark_size))
+            .background_color(colors.on(On::Primary))
+            .border_radius(BorderRadius::all(Val::Px(
+                theme_spacing.inputs.radio_button.radiomark_size,
+            )));
 
         let font = theme_data
             .text
@@ -280,33 +290,38 @@ impl RadioButton {
             .copy_from(theme_data.interaction_animation);
     }
 
-    // TODO: bevy 0.14: Add border radius instead of icon
     fn checked_style(style_builder: &mut StyleBuilder, theme_data: &ThemeData) {
+        let theme_spacing = theme_data.spacing;
         let colors = theme_data.colors();
 
         style_builder
             .switch_target(RadioButton::RADIOMARK_BACKGROUND)
-            .font_color(Color::NONE);
+            .background_color(colors.accent(Accent::Primary))
+            .border(UiRect::all(Val::Px(0.)));
 
         style_builder
             .switch_target(RadioButton::RADIOMARK)
             .animated()
-            .font_color(AnimatedVals {
-                idle: colors.accent(Accent::Primary),
+            .background_color(AnimatedVals {
+                idle: colors.on(On::Primary),
                 enter_from: colors.on(On::Surface).into(),
+                ..default()
+            })
+            .copy_from(theme_data.enter_animation);
+
+        style_builder
+            .switch_target(RadioButton::RADIOMARK)
+            .animated()
+            .size(AnimatedVals {
+                idle: Val::Px(theme_spacing.inputs.radio_button.radiomark_size),
+                enter_from: Val::Px(0.).into(),
                 ..default()
             })
             .copy_from(theme_data.enter_animation);
 
         style_builder
             .switch_target(RadioButton::LABEL)
-            .animated()
-            .font_color(AnimatedVals {
-                idle: colors.on(On::SurfaceVariant),
-                enter_from: colors.on(On::Surface).into(),
-                ..default()
-            })
-            .copy_from(theme_data.enter_animation);
+            .font_color(colors.on(On::SurfaceVariant));
     }
 
     fn button(name: String) -> impl Bundle {
@@ -320,11 +335,10 @@ impl RadioButton {
     fn radio_mark_background() -> impl Bundle {
         (
             Name::new("Radiomark Background"),
-            ImageBundle {
+            NodeBundle {
                 focus_policy: FocusPolicy::Pass,
                 ..default()
             },
-            BorderColor::default(),
             LockedStyleAttributes::lock(LockableStyleAttribute::FocusPolicy),
         )
     }
@@ -332,11 +346,10 @@ impl RadioButton {
     fn radio_mark() -> impl Bundle {
         (
             Name::new("Radiomark"),
-            ImageBundle {
+            NodeBundle {
                 focus_policy: FocusPolicy::Pass,
                 ..default()
             },
-            BorderColor::default(),
             LockedStyleAttributes::from_vec(vec![
                 LockableStyleAttribute::FocusPolicy,
                 LockableStyleAttribute::Visibility,

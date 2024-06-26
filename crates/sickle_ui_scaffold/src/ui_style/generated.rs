@@ -244,4 +244,38 @@ enum _StyleAttributes {
     Size {
         size: Val,
     },
+    #[skip_lockable_enum]
+    #[target_component(BorderRadius)]
+    #[animatable]
+    BorderRadius {
+        border_radius: BorderRadius,
+    },
+    #[skip_lockable_enum]
+    #[target_component(BorderRadius)]
+    #[target_component_attr(top_right)]
+    #[animatable]
+    BorderTRRadius {
+        border_tr_radius: Val,
+    },
+    #[skip_lockable_enum]
+    #[target_component(BorderRadius)]
+    #[target_component_attr(bottom_right)]
+    #[animatable]
+    BorderBRRadius {
+        border_br_radius: Val,
+    },
+    #[skip_lockable_enum]
+    #[target_component(BorderRadius)]
+    #[target_component_attr(bottom_left)]
+    #[animatable]
+    BorderBLRadius {
+        border_bl_radius: Val,
+    },
+    #[skip_lockable_enum]
+    #[target_component(BorderRadius)]
+    #[target_component_attr(top_left)]
+    #[animatable]
+    BorderTLRadius {
+        border_tl_radius: Val,
+    },
 }

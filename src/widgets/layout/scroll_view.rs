@@ -507,6 +507,7 @@ impl ScrollView {
                 theme_spacing.borders.extra_small,
             )))
             .border_color(colors.accent(Accent::Shadow))
+            .border_radius(BorderRadius::all(Val::Px(theme_spacing.scroll_bar_size)))
             .animated()
             .background_color(AnimatedVals {
                 idle: colors.accent(Accent::Tertiary).with_alpha(0.5),
@@ -520,6 +521,7 @@ impl ScrollView {
             .switch_context(ScrollView::VERTICAL_SCROLL_HANDLE, None)
             .border(UiRect::vertical(Val::Px(theme_spacing.borders.extra_small)))
             .border_color(colors.accent(Accent::Shadow))
+            .border_radius(BorderRadius::all(Val::Px(theme_spacing.scroll_bar_size)))
             .animated()
             .background_color(AnimatedVals {
                 idle: colors.accent(Accent::Tertiary).with_alpha(0.5),

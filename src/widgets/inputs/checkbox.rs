@@ -110,7 +110,6 @@ impl Checkbox {
         Theme::new(vec![base_theme, checked_theme])
     }
 
-    // TODO: bevy 0.14: Add border radius
     fn primary_style(style_builder: &mut StyleBuilder, theme_data: &ThemeData) {
         let theme_spacing = theme_data.spacing;
         let colors = theme_data.colors();
@@ -120,7 +119,10 @@ impl Checkbox {
             .justify_content(JustifyContent::Start)
             .align_items(AlignItems::Center)
             .margin(UiRect::horizontal(Val::Px(theme_spacing.gaps.small)))
-            .background_color(Color::NONE);
+            .background_color(Color::NONE)
+            .border_radius(BorderRadius::all(Val::Px(
+                theme_spacing.corners.extra_small,
+            )));
 
         style_builder
             .switch_target(Checkbox::CHECKMARK_BACKGROUND)
@@ -132,7 +134,9 @@ impl Checkbox {
             .border(UiRect::all(Val::Px(
                 theme_spacing.inputs.checkbox.border_size,
             )))
-            .background_color(Color::NONE)
+            .border_radius(BorderRadius::all(Val::Px(
+                theme_spacing.corners.extra_small,
+            )))
             .animated()
             .border_color(AnimatedVals {
                 idle: colors.on(On::SurfaceVariant),
@@ -142,10 +146,20 @@ impl Checkbox {
             .copy_from(theme_data.interaction_animation);
 
         style_builder
+            .switch_target(Checkbox::CHECKMARK_BACKGROUND)
+            .animated()
+            .background_color(AnimatedVals {
+                idle: Color::NONE,
+                hover: colors.accent(Accent::Primary).into(),
+                ..default()
+            })
+            .copy_from(theme_data.interaction_animation);
+
+        style_builder
             .switch_target(Checkbox::CHECKMARK)
             .size(Val::Px(theme_spacing.inputs.checkbox.checkmark_size))
             .icon(theme_data.icons.checkmark.with(
-                colors.on(On::PrimaryContainer),
+                colors.on(On::Primary),
                 theme_spacing.inputs.checkbox.checkmark_size,
             ));
 
@@ -188,7 +202,7 @@ impl Checkbox {
             .switch_target(Checkbox::CHECKMARK_BACKGROUND)
             .animated()
             .background_color(AnimatedVals {
-                idle: colors.container(Container::Primary),
+                idle: colors.accent(Accent::Primary),
                 enter_from: Some(Color::NONE),
                 ..default()
             })

@@ -1,6 +1,6 @@
 use bevy::{
     color::{Color, Mix},
-    ui::{UiRect, Val},
+    ui::{BorderRadius, Outline, UiRect, Val},
 };
 
 pub trait Lerp {
@@ -32,6 +32,28 @@ impl Lerp64 for f64 {
 impl Lerp for Color {
     fn lerp(&self, to: Self, t: f32) -> Self {
         self.mix(&to, t)
+    }
+}
+
+// TODO: Create a derive macro for these types?
+impl Lerp for BorderRadius {
+    fn lerp(&self, to: Self, t: f32) -> Self {
+        Self {
+            top_left: self.top_left.lerp(to.top_left, t),
+            top_right: self.top_right.lerp(to.top_right, t),
+            bottom_left: self.bottom_left.lerp(to.bottom_left, t),
+            bottom_right: self.bottom_right.lerp(to.bottom_right, t),
+        }
+    }
+}
+
+impl Lerp for Outline {
+    fn lerp(&self, to: Self, t: f32) -> Self {
+        Self {
+            width: self.width.lerp(to.width, t),
+            offset: self.offset.lerp(to.offset, t),
+            color: self.color.lerp(to.color, t),
+        }
     }
 }
 

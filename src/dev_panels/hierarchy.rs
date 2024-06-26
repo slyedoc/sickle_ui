@@ -248,7 +248,7 @@ pub struct HierarchyContainer {
 
 impl HierarchyContainer {
     pub fn foldable_theme() -> Theme<Foldable> {
-        let base_theme = PseudoTheme::deferred(None, HierarchyContainer::primary_style);
+        let base_theme = PseudoTheme::deferred(None, HierarchyContainer::foldable_style);
         let selected_theme = PseudoTheme::deferred(
             vec![PseudoState::Selected],
             HierarchyContainer::selected_style,
@@ -257,7 +257,22 @@ impl HierarchyContainer {
         Theme::new(vec![base_theme, selected_theme])
     }
 
-    fn primary_style(style_builder: &mut StyleBuilder, theme_data: &ThemeData) {
+    pub fn refresh_button_theme() -> Theme<MenuItem> {
+        let base_theme = PseudoTheme::deferred(None, HierarchyContainer::refresh_button_style);
+
+        Theme::new(vec![base_theme])
+    }
+
+    fn refresh_button_style(style_builder: &mut StyleBuilder, theme_data: &ThemeData) {
+        let theme_spacing = theme_data.spacing;
+
+        style_builder
+            .border(UiRect::bottom(Val::Px(theme_spacing.borders.extra_small)))
+            .border_color(theme_data.colors().accent(Accent::Shadow))
+            .width(Val::Percent(100.));
+    }
+
+    fn foldable_style(style_builder: &mut StyleBuilder, theme_data: &ThemeData) {
         let theme_spacing = theme_data.spacing;
         let colors = theme_data.colors();
 
@@ -308,15 +323,9 @@ impl UiHierarchyExt for UiBuilder<'_, Entity> {
                                             ),
                                             ..default()
                                         })
-                                        .style()
-                                        .margin(UiRect::bottom(Val::Px(5.)))
-                                        .width(Val::Percent(100.))
                                         .id();
                                 })
-                                .style()
-                                .border(UiRect::bottom(Val::Px(1.)))
-                                .margin(UiRect::bottom(Val::Px(10.)))
-                                .border_color(bevy::color::palettes::css::ANTIQUE_WHITE.into());
+                                .insert(HierarchyContainer::refresh_button_theme());
 
                             panel.scroll_view(None, |scroll_view| {
                                 let node_container = scroll_view

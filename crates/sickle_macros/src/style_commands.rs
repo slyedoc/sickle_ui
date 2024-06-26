@@ -12,6 +12,8 @@ enum ParseError {
     TooManyFields,
     InvalidType,
     InvalidTargetTuplType,
+    InvalidTargetComponentType,
+    InvalidTargetComponentAttrType,
     StaticAnimatable,
 }
 
@@ -21,6 +23,8 @@ struct StyleAttribute {
     command: Ident,
     type_path: TypePath,
     target_tupl: Option<proc_macro2::TokenStream>,
+    target_component: Option<proc_macro2::TokenStream>,
+    target_component_attr: Option<Ident>,
     animatable: bool,
     target_enum: bool,
     static_style_only: bool,
@@ -43,6 +47,8 @@ impl StyleAttribute {
             command,
             type_path,
             target_tupl: None,
+            target_component: None,
+            target_component_attr: None,
             animatable: false,
             target_enum: false,
             static_style_only: false,
@@ -117,6 +123,16 @@ fn match_error(span: proc_macro2::Span, error: ParseError) -> proc_macro2::Token
                 span => compile_error!("Unsupported target_tupl value. Must be defined as #[target_tupl(Component)]");
             }
         }
+        ParseError::InvalidTargetComponentType => {
+            return quote_spanned! {
+                span => compile_error!("Unsupported target_component value. Must be defined as #[target_component(Component)]");
+            }
+        }
+        ParseError::InvalidTargetComponentAttrType => {
+            return quote_spanned! {
+                span => compile_error!("Unsupported target_component_attr value. Must be defined as #[target_component_attr(attr)]. Must be used along with target_component.");
+            }
+        }
         ParseError::StaticAnimatable => {
             return quote_spanned! {
                 span => compile_error!("Attribute cannot be static only and animatable at the same time!");
@@ -170,8 +186,14 @@ fn parse_variant(variant: &Variant) -> Result<StyleAttribute, (proc_macro2::Span
             } else if attr.path().is_ident("skip_lockable_enum") {
                 attribute.skip_lockable_enum = true;
             } else if attr.path().is_ident("target_tupl") {
-                let token_stream = target_tupl(attr)?;
+                let token_stream = target_component(attr, ParseError::InvalidTargetTuplType)?;
                 attribute.target_tupl = Some(token_stream);
+            } else if attr.path().is_ident("target_component") {
+                let token_stream = target_component(attr, ParseError::InvalidTargetComponentType)?;
+                attribute.target_component = Some(token_stream);
+            } else if attr.path().is_ident("target_component_attr") {
+                let component_attr_ident = target_component_attr(attr)?;
+                attribute.target_component_attr = Some(component_attr_ident);
             }
         }
     }
@@ -183,16 +205,17 @@ fn parse_variant(variant: &Variant) -> Result<StyleAttribute, (proc_macro2::Span
     Ok(attribute)
 }
 
-fn target_tupl(
+fn target_component(
     attr: &Attribute,
+    error: ParseError,
 ) -> Result<proc_macro2::TokenStream, (proc_macro2::Span, ParseError)> {
     let attr_span = attr.path().get_ident().unwrap().span();
     let Meta::List(list) = &attr.meta else {
-        return Err((attr_span, ParseError::InvalidTargetTuplType));
+        return Err((attr_span, error));
     };
 
     if list.tokens.is_empty() {
-        return Err((attr_span, ParseError::InvalidTargetTuplType));
+        return Err((attr_span, error));
     }
 
     let tokens = list.tokens.clone().into_iter();
@@ -204,10 +227,59 @@ fn target_tupl(
     });
 
     if tokens.clone().count() == 0 || has_invalid_parts {
-        return Err((attr_span, ParseError::InvalidTargetTuplType));
+        return Err((attr_span, error));
     }
 
     Ok(list.tokens.clone())
+}
+
+fn target_component_attr(attr: &Attribute) -> Result<Ident, (proc_macro2::Span, ParseError)> {
+    let attr_span = attr.path().get_ident().unwrap().span();
+    let Meta::List(list) = &attr.meta else {
+        return Err((attr_span, ParseError::InvalidTargetComponentAttrType));
+    };
+
+    if list.tokens.is_empty() {
+        return Err((attr_span, ParseError::InvalidTargetComponentAttrType));
+    }
+
+    // MetaList {
+    //     path: Path {
+    //         leading_colon: None,
+    //         segments: [PathSegment {
+    //             ident: Ident {
+    //                 ident: "target_component_attr",
+    //                 span: SpanData {
+    //                     range: 4549..4570,
+    //                     anchor: SpanAnchor(FileId(13048), 5),
+    //                     ctx: SyntaxContextId(0),
+    //                 },
+    //             },
+    //             arguments: PathArguments::None,
+    //         }],
+    //     },
+    //     delimiter: MacroDelimiter::Paren(Paren),
+    //     tokens: TokenStream[Ident {
+    //         ident: "top_left",
+    //         span: SpanData {
+    //             range: 4571..4579,
+    //             anchor: SpanAnchor(FileId(13048), 5),
+    //             ctx: SyntaxContextId(0),
+    //         },
+    //     }],
+    // };
+
+    if let Some(attr_ident) = list.tokens.clone().into_iter().find(|e| match e {
+        proc_macro2::TokenTree::Ident(_) => true,
+        _ => false,
+    }) {
+        match attr_ident {
+            proc_macro2::TokenTree::Ident(attr_ident) => Ok(attr_ident),
+            _ => unreachable!(),
+        }
+    } else {
+        return Err((attr_span, ParseError::InvalidTargetComponentAttrType));
+    }
 }
 
 fn prepare_stylable_attribute(style_attributes: &Vec<StyleAttribute>) -> proc_macro2::TokenStream {
@@ -729,7 +801,7 @@ fn to_ui_style_command_impl(style_attribute: &StyleAttribute) -> proc_macro2::To
                 if let Some(locked_attrs) = world.get::<LockedStyleAttributes>(entity) {
                     if locked_attrs.contains(LockableStyleAttribute::#ident) {
                         warn!(
-                            "Failed to style {} property on entity {:?}: Attribute locked!",
+                            "Failed to style {} property on entity {}: Attribute locked!",
                             #target_attr_name,
                             entity
                         );
@@ -761,7 +833,7 @@ fn to_setter_entity_command_frag(style_attribute: &StyleAttribute) -> proc_macro
         quote! {
             let Some(mut #target_attr) = world.get_mut::<#target_type>(entity) else {
                 warn!(
-                    "Failed to set {} property on entity {:?}: No {} component found!",
+                    "Failed to set {} property on entity {}: No {} component found!",
                     #target_attr_name,
                     entity,
                     #target_type_name
@@ -785,7 +857,7 @@ fn to_setter_entity_command_frag(style_attribute: &StyleAttribute) -> proc_macro
         quote! {
             let Some(mut #target_attr) = world.get_mut::<#component_type>(entity) else {
                 warn!(
-                    "Failed to set {} property on entity {:?}: No {} component found!",
+                    "Failed to set {} property on entity {}: No {} component found!",
                     #target_attr_name,
                     entity,
                     #component_name,
@@ -797,11 +869,63 @@ fn to_setter_entity_command_frag(style_attribute: &StyleAttribute) -> proc_macro
                 #target_attr.0 = self.#target_attr;
             }
         }
+    } else if let (Some(target_component), Some(component_attr)) = (
+        &style_attribute.target_component,
+        &style_attribute.target_component_attr,
+    ) {
+        let component_type = target_component.clone();
+        let component_name: Vec<String> = target_component
+            .clone()
+            .into_iter()
+            .map(|tt| tt.to_string())
+            .collect();
+        let component_name = component_name.join("");
+        let attr_name = component_attr.to_string();
+
+        quote! {
+            let Some(mut #target_attr) = world.get_mut::<#component_type>(entity) else {
+                warn!(
+                    "Failed to set {} property on entity {}: No {} component found!",
+                    #attr_name,
+                    entity,
+                    #component_name,
+                );
+                return;
+            };
+
+            if #target_attr.bypass_change_detection().#component_attr != self.#target_attr {
+                #target_attr.#component_attr = self.#target_attr;
+            }
+        }
+    } else if let Some(target_component) = &style_attribute.target_component {
+        let component_type = target_component.clone();
+        let component_name: Vec<String> = target_component
+            .clone()
+            .into_iter()
+            .map(|tt| tt.to_string())
+            .collect();
+        let component_name = component_name.join("");
+
+        quote! {
+            let Some(mut #target_attr) = world.get_mut::<#component_type>(entity) else {
+                warn!(
+                    "Failed to set {} property on entity {}: No {} component found!",
+                    #target_attr_name,
+                    entity,
+                    #component_name,
+                );
+                return;
+            };
+
+            if *(#target_attr.bypass_change_detection()) != self.#target_attr {
+                world.entity_mut(entity).insert(self.#target_attr);
+            }
+        }
     } else {
         quote! {
             let Some(mut style) = world.get_mut::<Style>(entity) else {
                 warn!(
-                    "Failed to set {} property on entity {:?}: No Style component found!",
+                    "Failed to set {} property on entity {}: No Style component found!",
                     #target_attr_name,
                     entity
                 );

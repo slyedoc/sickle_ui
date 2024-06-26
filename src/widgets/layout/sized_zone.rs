@@ -366,7 +366,8 @@ fn update_sized_zone_on_resize(
         if parent != other_parent {
             warn!(
                 "Failed to resize sized zone: Neighbouring zones have different parents: {} <-> {}",
-                parent.get(), other_parent.get()
+                parent.get(),
+                other_parent.get()
             );
             continue;
         }

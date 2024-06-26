@@ -641,7 +641,10 @@ impl FloatingPanel {
             .absolute_position(panel.position)
             .border(UiRect::all(Val::Px(theme_spacing.borders.small)))
             .border_color(colors.accent(Accent::Shadow))
-            .background_color(colors.surface(Surface::Surface));
+            .background_color(colors.surface(Surface::Surface))
+            .border_radius(BorderRadius::all(Val::Px(
+                theme_spacing.corners.extra_small,
+            )));
 
         style_builder
             .animated()
@@ -666,7 +669,10 @@ impl FloatingPanel {
             .width(Val::Percent(100.))
             .align_items(AlignItems::Center)
             .justify_content(JustifyContent::Start)
-            .background_color(colors.container(Container::SurfaceMid));
+            .background_color(colors.container(Container::SurfaceMid))
+            .border_radius(BorderRadius::top(Val::Px(
+                theme_spacing.corners.extra_small,
+            )));
 
         style_builder
             .switch_target(FloatingPanel::TITLE)
@@ -687,12 +693,18 @@ impl FloatingPanel {
         style_builder
             .switch_target(FloatingPanel::CLOSE_BUTTON_CONTAINER)
             .right(Val::Px(0.))
-            .background_color(colors.container(Container::SurfaceMid));
+            .background_color(colors.container(Container::SurfaceMid))
+            .border_radius(BorderRadius::top_right(Val::Px(
+                theme_spacing.corners.extra_small,
+            )));
 
         style_builder
             .switch_target(FloatingPanel::CONTENT_VIEW)
             .width(Val::Percent(100.))
-            .height(Val::Percent(100.));
+            .height(Val::Percent(100.))
+            .border_radius(BorderRadius::bottom(Val::Px(
+                theme_spacing.corners.extra_small,
+            )));
 
         style_builder
             .switch_context(FloatingPanel::DRAG_HANDLE, None)

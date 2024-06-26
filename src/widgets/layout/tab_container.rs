@@ -705,8 +705,10 @@ impl Tab {
                 Val::Px(theme_spacing.gaps.medium),
                 Val::Px(theme_spacing.gaps.small),
             ))
-            .border(UiRect::right(Val::Px(theme_spacing.gaps.extra_small)))
+            .border(UiRect::right(Val::Px(theme_spacing.borders.small)))
             .border_color(colors.accent(Accent::OutlineVariant))
+            .border_radius(BorderRadius::top(Val::Px(theme_spacing.corners.small)))
+            .bottom(Val::Px(0.))
             .animated()
             .background_color(AnimatedVals {
                 idle: colors.container(Container::SurfaceMid),
@@ -718,7 +720,9 @@ impl Tab {
         style_builder
             .switch_target(Tab::LABEL)
             .sized_font(font)
-            .font_color(colors.on(On::Surface));
+            .font_color(colors.on(On::Surface))
+            .border(UiRect::top(Val::Px(theme_spacing.borders.extra_small)))
+            .border_color(Color::NONE);
 
         style_builder
             .switch_target(Tab::PANEL)
@@ -727,9 +731,47 @@ impl Tab {
     }
 
     fn selected_style(style_builder: &mut StyleBuilder, theme_data: &ThemeData) {
+        let theme_spacing = theme_data.spacing;
         let colors = theme_data.colors();
 
-        style_builder.background_color(colors.container(Container::SurfaceHighest));
+        style_builder
+            .background_color(colors.surface(Surface::Surface))
+            .animated()
+            .bottom(AnimatedVals {
+                idle: Val::Px(-theme_spacing.gaps.extra_small),
+                enter_from: Val::Px(0.).into(),
+                ..default()
+            })
+            .copy_from(theme_data.enter_animation);
+
+        style_builder
+            .animated()
+            .padding(AnimatedVals {
+                idle: UiRect::px(
+                    theme_spacing.gaps.medium,
+                    theme_spacing.gaps.medium,
+                    theme_spacing.gaps.small,
+                    theme_spacing.gaps.small + theme_spacing.gaps.extra_small,
+                ),
+                enter_from: UiRect::axes(
+                    Val::Px(theme_spacing.gaps.medium),
+                    Val::Px(theme_spacing.gaps.small),
+                )
+                .into(),
+                ..default()
+            })
+            .copy_from(theme_data.enter_animation);
+
+        // TODO: Fill tab with label container to set top border independently to tiny Outline color
+        style_builder
+            .switch_target(Tab::LABEL)
+            .animated()
+            .border_color(AnimatedVals {
+                idle: colors.accent(Accent::Outline),
+                enter_from: Color::NONE.into(),
+                ..default()
+            })
+            .copy_from(theme_data.enter_animation);
 
         style_builder
             .switch_target(Tab::PANEL)
@@ -957,6 +999,7 @@ impl TabContainer {
             .switch_target(TabContainer::TAB_BAR)
             .width(Val::Percent(100.))
             .height(Val::Px(theme_spacing.areas.medium))
+            .padding(UiRect::top(Val::Px(theme_spacing.gaps.tiny)))
             .border(UiRect::bottom(Val::Px(theme_spacing.borders.extra_small)))
             .border_color(colors.accent(Accent::Shadow))
             .background_color(colors.surface(Surface::Surface));
@@ -1087,6 +1130,7 @@ impl UiTabContainerSubExt for UiBuilder<'_, (Entity, TabContainer)> {
                             label: title,
                             ..default()
                         })
+                        .insert(BorderColor::default())
                         .id();
                 },
             )

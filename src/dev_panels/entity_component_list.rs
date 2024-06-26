@@ -146,6 +146,7 @@ impl EntityComponentTag {
         style_builder
             .padding(UiRect::all(Val::Px(theme_spacing.gaps.small)))
             .margin(UiRect::all(Val::Px(theme_spacing.gaps.small)))
+            .border_radius(BorderRadius::all(Val::Px(theme_spacing.corners.small)))
             .animated()
             .background_color(AnimatedVals {
                 idle: colors.accent(Accent::Tertiary),

@@ -109,7 +109,9 @@ pub fn event_handler_macro_derive(input: TokenStream) -> TokenStream {
         skip_lockable_enum,
         animatable,
         target_enum,
-        target_tupl
+        target_tupl,
+        target_component,
+        target_component_attr,
     )
 )]
 pub fn style_commands_macro_derive(input: TokenStream) -> TokenStream {

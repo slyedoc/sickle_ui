@@ -49,8 +49,22 @@ impl CheckboxSizes {
 }
 
 #[derive(Clone, Copy, Debug, Default, Reflect)]
+pub struct RedioButtonSizes {
+    pub border_size: f32,
+    pub radiomark_outer_size: f32,
+    pub radiomark_size: f32,
+}
+
+impl RedioButtonSizes {
+    pub fn radiomark_full_outer_size(&self) -> f32 {
+        self.radiomark_outer_size + 2. * self.border_size
+    }
+}
+
+#[derive(Clone, Copy, Debug, Default, Reflect)]
 pub struct InputSizes {
     pub checkbox: CheckboxSizes,
+    pub radio_button: RedioButtonSizes,
 }
 
 #[derive(Clone, Copy, Debug, Default, Reflect)]
@@ -64,6 +78,7 @@ pub struct ResizeZone {
 #[derive(Clone, Copy, Debug, Reflect)]
 pub struct ThemeSpacing {
     pub borders: DividerSpacing,
+    pub corners: Spacing,
     pub gaps: Spacing,
     pub areas: Spacing,
     pub icons: IconSizes,
@@ -82,6 +97,18 @@ impl Default for ThemeSpacing {
                 large: 8.,
                 custom_1: 3.,
                 custom_2: 6.,
+            },
+            corners: Spacing {
+                tiny: 2.,
+                extra_small: 3.,
+                small: 4.,
+                medium: 8.,
+                large: 16.,
+                extra_large: 32.,
+                custom_1: 2.,
+                custom_2: 6.,
+                custom_3: 22.,
+                custom_4: 48.,
             },
             gaps: Spacing {
                 tiny: 1.,
@@ -122,13 +149,18 @@ impl Default for ThemeSpacing {
                     checkbox_size: 12.,
                     checkmark_size: 14.,
                 },
+                radio_button: RedioButtonSizes {
+                    border_size: 1.,
+                    radiomark_outer_size: 14.,
+                    radiomark_size: 6.,
+                },
             },
             resize_zone: ResizeZone {
                 width: 4.,
                 pullback: 2.,
                 handle_gap: 1.,
             },
-            scroll_bar_size: 12.,
+            scroll_bar_size: 8.,
         }
     }
 }

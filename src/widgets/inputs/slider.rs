@@ -526,6 +526,7 @@ impl Slider {
             .size(Val::Px(theme_spacing.icons.small))
             .border(UiRect::all(Val::Px(theme_spacing.borders.extra_small)))
             .border_color(colors.accent(Accent::Shadow))
+            .border_radius(BorderRadius::all(Val::Px(theme_spacing.icons.small)))
             .animated()
             .background_color(AnimatedVals {
                 idle: colors.accent(Accent::Primary),

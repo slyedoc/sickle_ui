@@ -380,7 +380,6 @@ impl ResizeHandles {
             None => Vec4::ZERO,
         };
 
-        // TODO: bevy 0.14: account for parent border radius
         let pullback = match parent_id {
             Some(parent) => {
                 if let Some(parent_style) = world.get::<Style>(parent) {
