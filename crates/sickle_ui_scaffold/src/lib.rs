@@ -1,8 +1,6 @@
-pub mod animated_interaction;
 pub mod drag_interaction;
 pub mod drop_interaction;
 pub mod flux_interaction;
-pub mod interactions;
 pub mod scroll_interaction;
 pub mod theme;
 pub mod ui_builder;

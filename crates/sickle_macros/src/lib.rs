@@ -1,7 +1,5 @@
 mod default_theme;
 mod event_handler;
-mod simple_interaction_plugin;
-mod style_command;
 mod style_commands;
 mod ui_context;
 
@@ -100,18 +98,6 @@ use syn::DeriveInput;
 pub fn event_handler_macro_derive(input: TokenStream) -> TokenStream {
     let ast = syn::parse(input).unwrap();
     event_handler::derive_event_handler_macro(&ast)
-}
-
-#[proc_macro_attribute]
-pub fn simple_interaction_for(attr: TokenStream, item: TokenStream) -> TokenStream {
-    let ast = syn::parse_macro_input!(item as DeriveInput);
-    simple_interaction_plugin::impl_simple_interaction_plugin_macro(attr, ast.ident)
-}
-
-#[proc_macro_derive(StyleCommand, attributes(lock_attr, target_enum, target_tupl))]
-pub fn style_command_macro_derive(input: TokenStream) -> TokenStream {
-    let ast: DeriveInput = syn::parse(input.clone()).unwrap();
-    style_command::derive_style_command_macro(&ast)
 }
 
 #[proc_macro_derive(
