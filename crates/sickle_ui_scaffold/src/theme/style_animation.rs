@@ -773,11 +773,6 @@ impl AnimationState {
         } else if point_count < 5 {
             new_points.push((target_style, tween_ratio));
         } else {
-            warn!(
-                "Transition animation step overflow occured: {:?}",
-                new_points.clone()
-            );
-
             // At this point, this is from a weird jiggle, escape leak!
             // Reset to the last two step's interpolation
             return AnimationState {
