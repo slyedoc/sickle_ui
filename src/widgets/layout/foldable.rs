@@ -227,14 +227,9 @@ impl Foldable {
         (
             Name::new(format!("Foldable [{}] - Button", name)),
             ButtonBundle {
-                image: UiImage {
-                    color: Color::NONE,
-                    ..default()
-                },
                 focus_policy: FocusPolicy::Pass,
                 ..default()
             },
-            BackgroundColor(Color::NONE),
             TrackedInteraction::default(),
         )
     }

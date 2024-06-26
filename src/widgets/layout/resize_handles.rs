@@ -667,14 +667,9 @@ impl ResizeHandles {
                     position_type: PositionType::Absolute,
                     ..default()
                 },
-                image: UiImage {
-                    color: Color::NONE,
-                    ..default()
-                },
                 focus_policy: bevy::ui::FocusPolicy::Pass,
                 ..default()
             },
-            BackgroundColor(Color::NONE),
             TrackedInteraction::default(),
             Draggable::default(),
             RelativeCursorPosition::default(),

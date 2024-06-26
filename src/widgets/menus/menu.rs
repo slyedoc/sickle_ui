@@ -277,14 +277,7 @@ impl Menu {
     fn button(name: String) -> impl Bundle {
         (
             Name::new(name),
-            ButtonBundle {
-                image: UiImage {
-                    color: Color::NONE,
-                    ..default()
-                },
-                ..default()
-            },
-            BackgroundColor(Color::NONE),
+            ButtonBundle::default(),
             TrackedInteraction::default(),
         )
     }

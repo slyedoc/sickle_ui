@@ -528,11 +528,7 @@ impl EntityCommand for SetIcon {
                     check_lock!(world, entity, "icon", LockableStyleAttribute::Image);
                     // TODO: Check lock on text / font once it is available
                 }
-                SetImageTint {
-                    image_tint: Color::NONE,
-                    check_lock: self.check_lock,
-                }
-                .apply(entity, world);
+
                 world.entity_mut(entity).remove::<Text>();
                 world.entity_mut(entity).remove::<UiImage>();
             }
@@ -554,12 +550,6 @@ impl EntityCommand for SetIcon {
                 world
                     .entity_mut(entity)
                     .insert(BackgroundColor(Color::NONE));
-
-                // SetBackgroundColor {
-                //     background_color: Color::NONE,
-                //     check_lock: self.check_lock,
-                // }
-                // .apply(entity, world);
 
                 world.entity_mut(entity).remove::<UiImage>();
                 let font = world.resource::<AssetServer>().load(font);

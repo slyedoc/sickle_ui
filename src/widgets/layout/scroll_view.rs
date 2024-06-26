@@ -705,7 +705,7 @@ impl ScrollView {
         (
             Name::new("Scroll Bar Handle"),
             ButtonBundle {
-                style: Style {                    
+                style: Style {
                     width: match axis {
                         ScrollAxis::Horizontal => Val::Auto,
                         ScrollAxis::Vertical => Val::Percent(100.),
@@ -716,13 +716,8 @@ impl ScrollView {
                     },
                     ..default()
                 },
-                image: UiImage{
-                    color: Color::NONE,
-                    ..default()
-                },
                 ..default()
             },
-            BackgroundColor(Color::NONE),
             TrackedInteraction::default(),
             Draggable::default(),
             RelativeCursorPosition::default(),
@@ -749,7 +744,7 @@ pub trait UiScrollViewExt {
 impl UiScrollViewExt for UiBuilder<'_, Entity> {
     /// A simple scroll view. When the content overflows, scroll bars appear for the given direction.
     /// Can be restricted to scroll only on one axis.
-    /// 
+    ///
     /// ### PseudoState usage
     /// - `PseudoState::Disabled` is used when the view is disabled, preventing scroll bars from showing
     /// - `PseudoState::OverflowX` and `PseudoState::OverflowY` is used to indicate which axis the content

@@ -412,10 +412,6 @@ fn spawn_test_content(container: &mut UiBuilder<'_, Entity>) {
 
                                     row.spawn((
                                         ButtonBundle {
-                                            image: UiImage {
-                                                color: Color::NONE,
-                                                ..default()
-                                            },
                                             style: Style {
                                                 width: Val::Px(100.),
                                                 height: Val::Px(100.),

@@ -821,14 +821,7 @@ impl FloatingPanel {
     fn title_container(panel: Entity) -> impl Bundle {
         (
             Name::new("Title Container"),
-            ButtonBundle {
-                image: UiImage {
-                    color: Color::NONE,
-                    ..default()
-                },
-                ..default()
-            },
-            BackgroundColor(Color::NONE),
+            ButtonBundle::default(),
             FloatingPanelTitle { panel },
             TrackedInteraction::default(),
             Draggable::default(),
@@ -839,14 +832,7 @@ impl FloatingPanel {
     fn fold_button(panel: Entity) -> impl Bundle {
         (
             Name::new("Fold Button"),
-            ButtonBundle {
-                image: UiImage {
-                    color: Color::NONE,
-                    ..default()
-                },
-                ..default()
-            },
-            BackgroundColor(Color::NONE),
+            ButtonBundle::default(),
             ContentSize::default(),
             TrackedInteraction::default(),
             FloatingPanelFoldButton { panel },
@@ -856,14 +842,7 @@ impl FloatingPanel {
     fn drag_handle() -> impl Bundle {
         (
             Name::new("Drag Handle"),
-            ButtonBundle {
-                image: UiImage {
-                    color: Color::NONE,
-                    ..default()
-                },
-                ..default()
-            },
-            BackgroundColor(Color::NONE),
+            ButtonBundle::default(),
             TrackedInteraction::default(),
             Draggable::default(),
             RelativeCursorPosition::default(),
@@ -891,14 +870,7 @@ impl FloatingPanel {
     fn close_button(panel: Entity) -> impl Bundle {
         (
             Name::new("Close Button"),
-            ButtonBundle {
-                image: UiImage {
-                    color: Color::NONE,
-                    ..default()
-                },
-                ..default()
-            },
-            BackgroundColor(Color::NONE),
+            ButtonBundle::default(),
             ContentSize::default(),
             TrackedInteraction::default(),
             FloatingPanelCloseButton { panel },
