@@ -278,4 +278,30 @@ enum _StyleAttributes {
     BorderTLRadius {
         border_tl_radius: Val,
     },
+    #[skip_lockable_enum]
+    #[target_component(Outline)]
+    Outline {
+        outline: Outline,
+    },
+    #[skip_lockable_enum]
+    #[target_component(Outline)]
+    #[target_component_attr(width)]
+    #[animatable]
+    OutlineWidth {
+        outline_width: Val,
+    },
+    #[skip_lockable_enum]
+    #[target_component(Outline)]
+    #[target_component_attr(offset)]
+    #[animatable]
+    OutlineOffset {
+        outline_offset: Val,
+    },
+    #[skip_lockable_enum]
+    #[target_component(Outline)]
+    #[target_component_attr(color)]
+    #[animatable]
+    OutlineColor {
+        outline_color: Color,
+    },
 }

@@ -23,6 +23,7 @@ fn main() {
         }))
         .add_plugins(SickleUiPlugin)
         .add_plugins(UiFooterRootNodePlugin)
+        .add_plugins(OutlinedBlockPlugin)
         .init_resource::<CurrentPage>()
         .init_resource::<IconCache>()
         .init_state::<Page>()
@@ -120,6 +121,109 @@ impl UiUiFooterRootNodeExt for UiBuilder<'_, Entity> {
     }
 }
 // ^^^^^^^^^^^^
+
+pub struct OutlinedBlockPlugin;
+
+impl Plugin for OutlinedBlockPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_plugins(ComponentThemePlugin::<OutlinedBlock>::default());
+    }
+}
+
+#[derive(Component, Clone, Debug, Default, Reflect, UiContext)]
+#[reflect(Component)]
+pub struct OutlinedBlock;
+
+impl DefaultTheme for OutlinedBlock {
+    fn default_theme() -> Option<Theme<OutlinedBlock>> {
+        OutlinedBlock::theme().into()
+    }
+}
+
+impl OutlinedBlock {
+    pub fn theme() -> Theme<OutlinedBlock> {
+        let base_theme = PseudoTheme::deferred(None, OutlinedBlock::primary_style);
+        Theme::new(vec![base_theme])
+    }
+
+    fn primary_style(style_builder: &mut StyleBuilder, theme_data: &ThemeData) {
+        let theme_spacing = theme_data.spacing;
+        let colors = theme_data.colors();
+
+        style_builder
+            .size(Val::Px(100.))
+            .align_self(AlignSelf::Center)
+            .justify_self(JustifySelf::Center)
+            .margin(UiRect::all(Val::Px(30.)))
+            .background_color(colors.accent(Accent::Primary))
+            .padding(UiRect::all(Val::Px(theme_spacing.gaps.small)))
+            .animated()
+            .outline_width(AnimatedVals {
+                idle: Val::Px(0.),
+                hover: Val::Px(10.).into(),
+                ..default()
+            })
+            .copy_from(theme_data.interaction_animation);
+
+        style_builder
+            .animated()
+            .outline_color(AnimatedVals {
+                idle: colors.accent(Accent::Outline),
+                hover: colors.accent(Accent::OutlineVariant).into(),
+                hover_alt: colors.accent(Accent::Outline).into(),
+                ..default()
+            })
+            .copy_from(theme_data.interaction_animation)
+            .hover(
+                0.3,
+                ease::Ease::InOutBounce,
+                0.5,
+                0.,
+                AnimationLoop::PingPongContinous,
+            );
+
+        style_builder
+            .animated()
+            .outline_offset(AnimatedVals {
+                idle: Val::Px(0.),
+                press: Val::Px(10.).into(),
+                press_alt: Val::Px(12.).into(),
+                ..default()
+            })
+            .copy_from(theme_data.interaction_animation)
+            .pressed(
+                0.3,
+                ease::Ease::InOutBounce,
+                0.5,
+                0.,
+                AnimationLoop::PingPongContinous,
+            );
+    }
+
+    fn frame() -> impl Bundle {
+        (
+            Name::new("Outlined Block"),
+            NodeBundle::default(),
+            Outline::default(),
+        )
+    }
+}
+
+pub trait UiOutlinedBlockExt {
+    fn outlined_block(
+        &mut self,
+        spawn_children: impl FnOnce(&mut UiBuilder<Entity>),
+    ) -> UiBuilder<Entity>;
+}
+
+impl UiOutlinedBlockExt for UiBuilder<'_, Entity> {
+    fn outlined_block(
+        &mut self,
+        spawn_children: impl FnOnce(&mut UiBuilder<Entity>),
+    ) -> UiBuilder<Entity> {
+        self.container((OutlinedBlock::frame(), OutlinedBlock), spawn_children)
+    }
+}
 
 #[derive(SystemSet, Clone, Hash, Debug, Eq, PartialEq)]
 pub struct UiStartupSet;
@@ -696,6 +800,8 @@ fn layout_showcase(root_node: Query<Entity, With<ShowcaseContainer>>, mut comman
                         true,
                         |tab_container| {
                             tab_container.add_tab("Placeholder".into(), |placeholder| {
+                                placeholder.style().padding(UiRect::all(Val::Px(10.)));
+
                                 placeholder.row(|row| {
                                     row.checkbox(None, false);
                                     row.radio_group(vec!["Light", "Dark"], 1, false);
@@ -722,34 +828,7 @@ fn layout_showcase(root_node: Query<Entity, With<ShowcaseContainer>>, mut comman
                                     );
                                 });
 
-                                placeholder.scroll_view(None, |scroll_view| {
-                                    for _ in 0..10 {
-                                        scroll_view.row(|row| {
-                                            for _ in 0..10 {
-                                                row.container(
-                                                    NodeBundle {
-                                                        style: Style {
-                                                            height: Val::Px(50.),
-                                                            flex_shrink: 0.,
-                                                            border: UiRect::all(Val::Px(1.)),
-                                                            ..default()
-                                                        },
-                                                        background_color: Color::WHITE.into(),
-                                                        border_color: Color::BLACK.into(),
-                                                        ..default()
-                                                    },
-                                                    |container| {
-                                                        container.label(LabelConfig {
-                                                            label: "Test Node".into(),
-                                                            color: Color::BLACK,
-                                                            ..default()
-                                                        });
-                                                    },
-                                                );
-                                            }
-                                        });
-                                    }
-                                });
+                                placeholder.outlined_block(|_| {});
 
                                 placeholder.row(|row| {
                                     row.style().justify_content(JustifyContent::SpaceBetween);
