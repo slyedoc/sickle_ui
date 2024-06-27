@@ -248,8 +248,8 @@ impl DropdownOption {
             .margin(UiRect::bottom(Val::Px(theme_spacing.gaps.tiny)))
             .animated()
             .background_color(AnimatedVals {
-                idle: colors.container(Container::SurfaceMid),
-                hover: colors.container(Container::SurfaceHighest).into(),
+                idle: colors.container(Container::Primary),
+                hover: colors.accent(Accent::Primary).into(),
                 ..default()
             })
             .copy_from(theme_data.interaction_animation);
@@ -257,7 +257,13 @@ impl DropdownOption {
         style_builder
             .switch_target(DropdownOption::LABEL)
             .sized_font(font)
-            .font_color(colors.on(On::Surface));
+            .animated()
+            .font_color(AnimatedVals {
+                idle: colors.on(On::PrimaryContainer),
+                hover: colors.on(On::Primary).into(),
+                ..default()
+            })
+            .copy_from(theme_data.interaction_animation);
     }
 }
 
@@ -375,6 +381,8 @@ impl Dropdown {
                 Val::Px(theme_spacing.gaps.medium),
                 Val::Px(theme_spacing.gaps.extra_small),
             ))
+            .border(UiRect::all(Val::Px(0.)))
+            .border_color(colors.accent(Accent::Outline))
             .border_radius(BorderRadius::all(Val::Px(
                 theme_spacing.corners.extra_small,
             )))
@@ -424,7 +432,7 @@ impl Dropdown {
             .z_index(ZIndex::Global(DROPDOWN_PANEL_Z_INDEX as i32))
             .border(UiRect::all(Val::Px(theme_spacing.gaps.tiny)))
             .border_color(colors.accent(Accent::Shadow))
-            .background_color(colors.container(Container::SurfaceMid));
+            .background_color(colors.container(Container::Primary));
 
         style_builder
             .switch_target(Dropdown::SCROLL_VIEW_CONTENT)
@@ -451,53 +459,55 @@ impl Dropdown {
         let enter_animation = theme_data.enter_animation.clone();
         let corner_from_width =
             placement.panel_width < placement.button_width - theme_spacing.corners.extra_small;
+        let extra_small_border = theme_spacing.borders.extra_small;
+        let extra_small_corner = theme_spacing.corners.extra_small;
+        let maybe_button_corner = match corner_from_width {
+            true => extra_small_corner,
+            false => 0.,
+        };
 
         style_builder.background_color(colors.container(Container::Primary));
 
         match placement.anchor {
             DropdownPanelAnchor::TopLeft => {
-                style_builder.border_radius(BorderRadius::px(
-                    0.,
-                    match corner_from_width {
-                        true => theme_spacing.corners.extra_small,
-                        false => 0.,
-                    },
-                    theme_spacing.corners.extra_small,
-                    theme_spacing.corners.extra_small,
-                ));
+                style_builder
+                    .border(UiRect::top(Val::Px(extra_small_border)))
+                    .border_radius(BorderRadius::px(
+                        0.,
+                        maybe_button_corner,
+                        extra_small_corner,
+                        extra_small_corner,
+                    ));
             }
             DropdownPanelAnchor::TopRight => {
-                style_builder.border_radius(BorderRadius::px(
-                    match corner_from_width {
-                        true => theme_spacing.corners.extra_small,
-                        false => 0.,
-                    },
-                    0.,
-                    theme_spacing.corners.extra_small,
-                    theme_spacing.corners.extra_small,
-                ));
+                style_builder
+                    .border(UiRect::top(Val::Px(extra_small_border)))
+                    .border_radius(BorderRadius::px(
+                        maybe_button_corner,
+                        0.,
+                        extra_small_corner,
+                        extra_small_corner,
+                    ));
             }
             DropdownPanelAnchor::BottomLeft => {
-                style_builder.border_radius(BorderRadius::px(
-                    theme_spacing.corners.extra_small,
-                    theme_spacing.corners.extra_small,
-                    match corner_from_width {
-                        true => theme_spacing.corners.extra_small,
-                        false => 0.,
-                    },
-                    0.,
-                ));
+                style_builder
+                    .border(UiRect::bottom(Val::Px(extra_small_border)))
+                    .border_radius(BorderRadius::px(
+                        extra_small_corner,
+                        extra_small_corner,
+                        maybe_button_corner,
+                        0.,
+                    ));
             }
             DropdownPanelAnchor::BottomRight => {
-                style_builder.border_radius(BorderRadius::px(
-                    theme_spacing.corners.extra_small,
-                    theme_spacing.corners.extra_small,
-                    0.,
-                    match corner_from_width {
-                        true => theme_spacing.corners.extra_small,
-                        false => 0.,
-                    },
-                ));
+                style_builder
+                    .border(UiRect::bottom(Val::Px(extra_small_border)))
+                    .border_radius(BorderRadius::px(
+                        extra_small_corner,
+                        extra_small_corner,
+                        0.,
+                        maybe_button_corner,
+                    ));
             }
         }
 
@@ -523,50 +533,60 @@ impl Dropdown {
             })
             .copy_from(enter_animation);
 
+        let maybe_border = match placement.wider_than_button {
+            true => extra_small_border,
+            false => 0.,
+        };
+
+        let maybe_corner = match placement.wider_than_button {
+            true => extra_small_corner,
+            false => 0.,
+        };
+
         match placement.anchor {
             DropdownPanelAnchor::TopLeft => {
-                style_builder.border_radius(BorderRadius::px(
-                    theme_spacing.corners.extra_small,
-                    theme_spacing.corners.extra_small,
-                    match placement.wider_than_button {
-                        true => theme_spacing.corners.extra_small,
-                        false => 0.,
-                    },
-                    0.,
-                ));
+                style_builder
+                    .switch_target(Dropdown::PANEL)
+                    .border(UiRect::px(0., maybe_border, extra_small_border, 0.))
+                    .border_radius(BorderRadius::px(
+                        extra_small_corner,
+                        extra_small_corner,
+                        maybe_corner,
+                        0.,
+                    ));
             }
             DropdownPanelAnchor::TopRight => {
-                style_builder.border_radius(BorderRadius::px(
-                    theme_spacing.corners.extra_small,
-                    theme_spacing.corners.extra_small,
-                    0.,
-                    match placement.wider_than_button {
-                        true => theme_spacing.corners.extra_small,
-                        false => 0.,
-                    },
-                ));
+                style_builder
+                    .switch_target(Dropdown::PANEL)
+                    .border(UiRect::px(maybe_border, 0., extra_small_border, 0.))
+                    .border_radius(BorderRadius::px(
+                        extra_small_corner,
+                        extra_small_corner,
+                        0.,
+                        maybe_corner,
+                    ));
             }
             DropdownPanelAnchor::BottomLeft => {
-                style_builder.border_radius(BorderRadius::px(
-                    0.,
-                    match placement.wider_than_button {
-                        true => theme_spacing.corners.extra_small,
-                        false => 0.,
-                    },
-                    theme_spacing.corners.extra_small,
-                    theme_spacing.corners.extra_small,
-                ));
+                style_builder
+                    .switch_target(Dropdown::PANEL)
+                    .border(UiRect::px(0., maybe_border, 0., extra_small_border))
+                    .border_radius(BorderRadius::px(
+                        0.,
+                        maybe_corner,
+                        extra_small_corner,
+                        extra_small_corner,
+                    ));
             }
             DropdownPanelAnchor::BottomRight => {
-                style_builder.border_radius(BorderRadius::px(
-                    match placement.wider_than_button {
-                        true => theme_spacing.corners.extra_small,
-                        false => 0.,
-                    },
-                    0.,
-                    theme_spacing.corners.extra_small,
-                    theme_spacing.corners.extra_small,
-                ));
+                style_builder
+                    .switch_target(Dropdown::PANEL)
+                    .border(UiRect::px(maybe_border, 0., 0., extra_small_border))
+                    .border_radius(BorderRadius::px(
+                        maybe_corner,
+                        0.,
+                        extra_small_corner,
+                        extra_small_corner,
+                    ));
             }
         }
 
