@@ -5,9 +5,7 @@ use bevy::{
 };
 
 use sickle_macros::UiContext;
-use sickle_ui_scaffold::{prelude::*, ui_commands::ResetChildrenInUiSurface};
-
-use crate::hierarchy_delay::DelayActions;
+use sickle_ui_scaffold::prelude::*;
 
 use super::{
     floating_panel::FloatingPanelTitle,
@@ -57,7 +55,6 @@ pub struct DockingZoneUpdate;
 
 fn cleanup_empty_docking_zones(
     q_tab_containers: Query<(&TabContainer, &RemoveEmptyDockingZone), Changed<TabContainer>>,
-    q_parent: Query<&Parent>,
     mut commands: Commands,
 ) {
     for (tab_container, zone_ref) in &q_tab_containers {
@@ -65,21 +62,7 @@ fn cleanup_empty_docking_zones(
             continue;
         }
 
-        let Ok(parent) = q_parent.get(zone_ref.zone) else {
-            warn!(
-                "Invalid docking zone detected: Zone {} doesn't have a Parent!",
-                zone_ref.zone
-            );
-            commands.entity(zone_ref.zone).despawn_recursive();
-            continue;
-        };
-
-        let parent_id = parent.get();
-
         commands.entity(zone_ref.zone).despawn_recursive();
-        // Make sure the docking zone's parent is updated to avoid invalid taffy state
-        // TODO: remove this once it is no longer needed. Testing should be done by calling despawn_recursive on parent_id in a later frame
-        commands.entity(parent_id).add(ResetChildrenInUiSurface);
     }
 }
 
@@ -195,7 +178,6 @@ fn cleanup_empty_docking_zone_splits(
         }
 
         commands.entity(topmost_empty_split).despawn_recursive();
-        commands.entity(parent_id).add(ResetChildrenInUiSurface);
     }
 }
 
@@ -306,10 +288,6 @@ fn cleanup_shell_docking_zone_splits(
             .insert_children(insert_index, &children_to_move);
         // Remove parent, along with the current split
         commands.entity(parent_id).despawn_recursive();
-        // Refresh outer parent's children in taffy to avoid panics
-        commands
-            .entity(second_parent_id)
-            .add(ResetChildrenInUiSurface);
     }
 }
 
@@ -372,10 +350,6 @@ fn cleanup_leftover_docking_zone_splits(
                 .insert_children(insert_index, &vec![docking_zone_id]);
             // Remove split zone
             commands.entity(zone_split_id).despawn_recursive();
-            // Refresh parent's children in taffy to avoid panics
-            commands
-                .entity(zone_split_parent_id)
-                .add(ResetChildrenInUiSurface);
         }
     }
 }
@@ -670,8 +644,6 @@ impl Command for DockingZoneSplit {
                     .insert_children(current_index + 1, &[new_docking_zone_id]);
             }
         }
-
-        commands.entity(parent_id).reset_children_in_ui_surface();
     }
 }
 

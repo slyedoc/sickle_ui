@@ -51,6 +51,7 @@ pub struct FloatingPanelUpdate;
 // TODO: Extract widget interaction to separate plugins, i.e. "tab_popout"
 // TODO: Re-verify system scheduling, be extra careful of theming not being applied in cases
 // when context entity is set late, like below
+// TODO: Consider using an observer to do this
 fn update_floating_panel_panel_id(
     mut q_floating_panels: Query<
         (Entity, &mut FloatingPanel, &UpdateFloatingPanelPanelId),

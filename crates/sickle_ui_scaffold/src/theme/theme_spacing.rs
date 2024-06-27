@@ -74,7 +74,6 @@ pub struct ResizeZone {
     pub handle_gap: f32,
 }
 
-// TODO: bevy 0.14: Add shape / border radius
 #[derive(Clone, Copy, Debug, Reflect)]
 pub struct ThemeSpacing {
     pub borders: DividerSpacing,

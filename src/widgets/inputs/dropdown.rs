@@ -2,7 +2,7 @@ use std::collections::VecDeque;
 
 use bevy::{prelude::*, ui::FocusPolicy};
 
-use sickle_ui_scaffold::prelude::*;
+use sickle_ui_scaffold::{prelude::*, ui_commands::UpdateTextExt};
 
 use crate::widgets::layout::{
     container::UiContainerExt,
@@ -37,13 +37,9 @@ impl Plugin for DropdownPlugin {
 
 fn update_dropdown_label(
     mut q_dropdowns: Query<(&mut Dropdown, &DropdownOptions), Changed<Dropdown>>,
-    mut q_text: Query<&mut Text>,
+    mut commands: Commands,
 ) {
     for (mut dropdown, options) in &mut q_dropdowns {
-        let Ok(mut label) = q_text.get_mut(dropdown.label) else {
-            continue;
-        };
-
         if let Some(value) = dropdown.value {
             if value >= options.0.len() {
                 dropdown.value = None;
@@ -56,12 +52,7 @@ fn update_dropdown_label(
             String::from("---")
         };
 
-        if label.sections.len() > 0 {
-            label.sections[0].value = text;
-        } else {
-            // TODO: Set text in a way the theming applies the font
-            label.sections = vec![TextSection::new(text, TextStyle::default())];
-        }
+        commands.entity(dropdown.label).update_text(text);
     }
 }
 

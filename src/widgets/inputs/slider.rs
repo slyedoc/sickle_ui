@@ -384,7 +384,6 @@ impl Slider {
         Theme::new(vec![base_theme])
     }
 
-    // TODO: bevy 0.14: Redesign handle style with rounded borders
     fn primary_style(style_builder: &mut StyleBuilder, slider: &Slider, theme_data: &ThemeData) {
         let theme_spacing = theme_data.spacing;
         let colors = theme_data.colors();

@@ -463,7 +463,6 @@ impl ScrollView {
         ])
     }
 
-    // TODO: bevy 0.14: Add border radius to scroll bar handles
     fn primary_style(
         style_builder: &mut StyleBuilder,
         _scroll_view: &ScrollView,

@@ -1,6 +1,5 @@
 mod assets;
 pub mod dev_panels;
-pub mod hierarchy_delay;
 pub mod input_extension;
 pub mod widgets;
 
@@ -10,7 +9,6 @@ use assets::BuiltInAssetsPlugin;
 use drag_interaction::DragInteractionPlugin;
 use drop_interaction::DropInteractionPlugin;
 use flux_interaction::FluxInteractionPlugin;
-use hierarchy_delay::HierarchyDelayPlugin;
 use scroll_interaction::ScrollInteractionPlugin;
 use theme::ThemePlugin;
 use widgets::WidgetsPlugin;
@@ -37,7 +35,6 @@ impl Plugin for SickleUiPlugin {
             BuiltInAssetsPlugin,
             DragInteractionPlugin,
             DropInteractionPlugin,
-            HierarchyDelayPlugin,
             FluxInteractionPlugin,
             ScrollInteractionPlugin,
             WidgetsPlugin,

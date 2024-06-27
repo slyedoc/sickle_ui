@@ -287,18 +287,6 @@ impl LogHierarchyExt for EntityCommands<'_> {
     }
 }
 
-pub struct ResetChildrenInUiSurface;
-impl EntityCommand for ResetChildrenInUiSurface {
-    fn apply(self, _id: Entity, _world: &mut World) {
-        // world.resource_scope(|world, mut ui_surface: Mut<UiSurface>| {
-        //     let Ok(children) = world.query::<&Children>().get(world, id) else {
-        //         return;
-        //     };
-        //     ui_surface.update_children(id, children);
-        // });
-    }
-}
-
 // Adopted from @brandonreinhart
 pub trait EntityCommandsNamedExt {
     fn named(&mut self, name: impl Into<String>) -> &mut Self;

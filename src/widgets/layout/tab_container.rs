@@ -118,10 +118,14 @@ fn dock_panel_in_tab_container(
             .container(
                 Tab::frame(format!("Tab [{}]", panel.title())),
                 |container| {
-                    tab.label = container
-                        .label(LabelConfig {
-                            label: panel.title(),
-                            ..default()
+                    tab.label_container = container
+                        .container(NodeBundle::default(), |container| {
+                            tab.label = container
+                                .label(LabelConfig {
+                                    label: panel.title(),
+                                    ..default()
+                                })
+                                .id();
                         })
                         .id();
                 },
