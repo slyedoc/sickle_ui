@@ -55,6 +55,7 @@ pub enum ImageSource {
     Path(String),
     Lookup(String, fn(String, Entity, &mut World) -> Handle<Image>),
     Handle(Handle<Image>),
+    Atlas(String, TextureAtlasLayout),
 }
 
 impl Default for ImageSource {
@@ -86,7 +87,7 @@ impl EntityCommand for SetImage {
             check_lock!(world, entity, "image", LockableStyleAttribute::Image);
         }
 
-        let handle = match self.source {
+        let handle = match self.source.clone() {
             ImageSource::Path(path) => {
                 if path == "" {
                     Handle::default()
@@ -96,6 +97,13 @@ impl EntityCommand for SetImage {
             }
             ImageSource::Lookup(path, callback) => callback(path, entity, world),
             ImageSource::Handle(handle) => handle,
+            ImageSource::Atlas(path, _) => {
+                if path == "" {
+                    Handle::default()
+                } else {
+                    world.resource::<AssetServer>().load(path)
+                }
+            }
         };
 
         let Some(mut image) = world.get_mut::<UiImage>(entity) else {
@@ -108,6 +116,23 @@ impl EntityCommand for SetImage {
 
         if image.texture != handle {
             image.texture = handle;
+        }
+
+        if let ImageSource::Atlas(_, layout) = self.source {
+            let layout_handle = world
+                .resource_mut::<Assets<TextureAtlasLayout>>()
+                .add(layout.clone());
+
+            if let Some(mut atlas) = world.get_mut::<TextureAtlas>(entity) {
+                if atlas.layout != layout_handle {
+                    atlas.layout = layout_handle;
+                    atlas.index = 0;
+                }
+            } else {
+                world
+                    .entity_mut(entity)
+                    .insert(TextureAtlas::from(layout_handle));
+            }
         }
     }
 }

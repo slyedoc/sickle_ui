@@ -1,6 +1,7 @@
 //! An example using the widget library to create a simple 3D scene view with a hierarchy browser for the scene asset.
 use bevy::prelude::*;
 
+use ease::Ease;
 use sickle_ui::{
     dev_panels::{
         hierarchy::{HierarchyTreeViewPlugin, UiHierarchyExt},
@@ -24,6 +25,7 @@ fn main() {
         .add_plugins(SickleUiPlugin)
         .add_plugins(UiFooterRootNodePlugin)
         .add_plugins(OutlinedBlockPlugin)
+        .add_plugins(TextureAtlasInteractionPlugin)
         .init_resource::<CurrentPage>()
         .init_resource::<IconCache>()
         .init_state::<Page>()
@@ -59,7 +61,7 @@ pub struct UiCamera;
 #[derive(Component)]
 pub struct UiMainRootNode;
 
-// Example themed widget, generated with snipped
+// Example themed widgets, generated with snipped
 pub struct UiFooterRootNodePlugin;
 
 impl Plugin for UiFooterRootNodePlugin {
@@ -120,7 +122,6 @@ impl UiUiFooterRootNodeExt for UiBuilder<'_, Entity> {
         )
     }
 }
-// ^^^^^^^^^^^^
 
 pub struct OutlinedBlockPlugin;
 
@@ -176,7 +177,7 @@ impl OutlinedBlock {
             .copy_from(theme_data.interaction_animation)
             .hover(
                 0.3,
-                ease::Ease::InOutBounce,
+                Ease::InOutBounce,
                 0.5,
                 0.,
                 AnimationLoop::PingPongContinous,
@@ -193,7 +194,7 @@ impl OutlinedBlock {
             .copy_from(theme_data.interaction_animation)
             .pressed(
                 0.3,
-                ease::Ease::InOutBounce,
+                Ease::InOutBounce,
                 0.5,
                 0.,
                 AnimationLoop::PingPongContinous,
@@ -210,20 +211,95 @@ impl OutlinedBlock {
 }
 
 pub trait UiOutlinedBlockExt {
-    fn outlined_block(
-        &mut self,
-        spawn_children: impl FnOnce(&mut UiBuilder<Entity>),
-    ) -> UiBuilder<Entity>;
+    fn outlined_block(&mut self) -> UiBuilder<Entity>;
 }
 
 impl UiOutlinedBlockExt for UiBuilder<'_, Entity> {
-    fn outlined_block(
-        &mut self,
-        spawn_children: impl FnOnce(&mut UiBuilder<Entity>),
-    ) -> UiBuilder<Entity> {
-        self.container((OutlinedBlock::frame(), OutlinedBlock), spawn_children)
+    fn outlined_block(&mut self) -> UiBuilder<Entity> {
+        self.spawn((OutlinedBlock::frame(), OutlinedBlock))
     }
 }
+
+pub struct TextureAtlasInteractionPlugin;
+
+impl Plugin for TextureAtlasInteractionPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_plugins(ComponentThemePlugin::<TextureAtlasInteraction>::default());
+    }
+}
+
+#[derive(Component, Clone, Debug, Default, Reflect, UiContext)]
+#[reflect(Component)]
+pub struct TextureAtlasInteraction;
+
+impl DefaultTheme for TextureAtlasInteraction {
+    fn default_theme() -> Option<Theme<TextureAtlasInteraction>> {
+        TextureAtlasInteraction::theme().into()
+    }
+}
+
+impl TextureAtlasInteraction {
+    pub fn theme() -> Theme<TextureAtlasInteraction> {
+        let base_theme = PseudoTheme::deferred(None, TextureAtlasInteraction::primary_style);
+        Theme::new(vec![base_theme])
+    }
+
+    fn primary_style(style_builder: &mut StyleBuilder, theme_data: &ThemeData) {
+        let theme_spacing = theme_data.spacing;
+        let colors = theme_data.colors();
+
+        style_builder
+            .size(Val::Px(96.))
+            .align_self(AlignSelf::Center)
+            .justify_self(JustifySelf::Center)
+            .margin(UiRect::all(Val::Px(30.)))
+            .background_color(colors.accent(Accent::OutlineVariant))
+            .outline(Outline {
+                width: Val::Px(5.),
+                color: colors.accent(Accent::Primary),
+                ..default()
+            })
+            .padding(UiRect::all(Val::Px(theme_spacing.gaps.small)))
+            .animated()
+            .atlas_index(AnimatedVals {
+                enter_from: Some(0),
+                idle: 7,
+                idle_alt: Some(11),
+                hover: Some(12),
+                hover_alt: Some(16),
+                press: Some(29),
+                ..default()
+            })
+            .copy_from(theme_data.interaction_animation)
+            .enter(0.8, Ease::Linear, 1.)
+            .idle(0.5, Ease::Linear, 0., 0., AnimationLoop::PingPongContinous)
+            .hover(0.5, Ease::Linear, 0., 0., AnimationLoop::PingPongContinous)
+            .press(1.3, Ease::Linear, 0.)
+            .cancel(0.5, Ease::Linear, 0.);
+    }
+
+    fn frame() -> impl Bundle {
+        (Name::new("TextureAtlasInteraction"), ImageBundle::default())
+    }
+}
+
+pub trait UiTextureAtlasInteractionExt {
+    fn atlas_example(&mut self) -> UiBuilder<Entity>;
+}
+
+impl UiTextureAtlasInteractionExt for UiBuilder<'_, Entity> {
+    fn atlas_example(&mut self) -> UiBuilder<Entity> {
+        let mut result = self.spawn((TextureAtlasInteraction::frame(), TextureAtlasInteraction));
+        // TODO: Replace with sharable asset
+        result.style().image(ImageSource::Atlas(
+            String::from("examples/30FPS_ASLight_05_Sparkle.png"),
+            TextureAtlasLayout::from_grid(UVec2::splat(192), 5, 6, None, None),
+        ));
+
+        result
+    }
+}
+// ^^^^^^^^^^^^
 
 #[derive(SystemSet, Clone, Hash, Debug, Eq, PartialEq)]
 pub struct UiStartupSet;
@@ -828,7 +904,8 @@ fn layout_showcase(root_node: Query<Entity, With<ShowcaseContainer>>, mut comman
                                     );
                                 });
 
-                                placeholder.outlined_block(|_| {});
+                                placeholder.outlined_block();
+                                placeholder.atlas_example();
 
                                 placeholder.row(|row| {
                                     row.style().justify_content(JustifyContent::SpaceBetween);

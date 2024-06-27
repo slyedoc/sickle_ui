@@ -17,6 +17,12 @@ impl Lerp for f32 {
     }
 }
 
+impl Lerp for f64 {
+    fn lerp(&self, to: Self, t: f32) -> Self {
+        self + ((to - self) * t as f64)
+    }
+}
+
 impl Lerp64 for f32 {
     fn lerp_64(&self, to: Self, t: f64) -> Self {
         self + ((to - self) * t as f32)
@@ -26,6 +32,16 @@ impl Lerp64 for f32 {
 impl Lerp64 for f64 {
     fn lerp_64(&self, to: Self, t: f64) -> Self {
         self + ((to - self) * t)
+    }
+}
+
+impl Lerp for usize {
+    /// NOTE: This will try to convert the `usize` into `f64` for calculation. Falls back to 0.
+    fn lerp(&self, to: Self, t: f32) -> Self {
+        let a = f64::try_from(*self as u32).unwrap_or_default();
+        let b = f64::try_from(to as u32).unwrap_or_default();
+
+        a.lerp(b, t).round() as usize
     }
 }
 
