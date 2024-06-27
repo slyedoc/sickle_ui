@@ -390,6 +390,9 @@ impl Submenu {
             .z_index(ZIndex::Local(1))
             .background_color(colors.container(Container::SurfaceMid))
             .border_color(colors.accent(Accent::Shadow))
+            .border_radius(BorderRadius::all(Val::Px(
+                theme_spacing.corners.extra_small,
+            )))
             .display(Display::None)
             .visibility(Visibility::Hidden);
     }

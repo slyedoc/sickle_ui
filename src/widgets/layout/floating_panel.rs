@@ -639,7 +639,7 @@ impl FloatingPanel {
 
         style_builder
             .absolute_position(panel.position)
-            .border(UiRect::all(Val::Px(theme_spacing.borders.small)))
+            .border(UiRect::all(Val::Px(theme_spacing.borders.extra_small)))
             .border_color(colors.accent(Accent::Shadow))
             .background_color(colors.surface(Surface::Surface))
             .border_radius(BorderRadius::all(Val::Px(

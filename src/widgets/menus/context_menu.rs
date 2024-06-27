@@ -362,6 +362,9 @@ impl ContextMenu {
             .z_index(ZIndex::Global(MENU_CONTAINER_Z_INDEX))
             .background_color(colors.container(Container::SurfaceMid))
             .border_color(colors.accent(Accent::Shadow))
+            .border_radius(BorderRadius::all(Val::Px(
+                theme_spacing.corners.extra_small,
+            )))
             .visibility(Visibility::Hidden);
     }
 
