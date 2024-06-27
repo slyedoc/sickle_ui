@@ -280,6 +280,7 @@ enum _StyleAttributes {
     },
     #[skip_lockable_enum]
     #[target_component(Outline)]
+    #[animatable]
     Outline {
         outline: Outline,
     },

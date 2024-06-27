@@ -897,30 +897,29 @@ fn to_setter_entity_command_frag(style_attribute: &StyleAttribute) -> proc_macro
                 #target_attr.#component_attr = self.#target_attr;
             }
         }
-    } else if let Some(_target_component) = &style_attribute.target_component {
-        // let component_type = target_component.clone();
-        // let component_name: Vec<String> = target_component
-        //     .clone()
-        //     .into_iter()
-        //     .map(|tt| tt.to_string())
-        //     .collect();
-        // let component_name = component_name.join("");
+    } else if let Some(target_component) = &style_attribute.target_component {
+        let component_type = target_component.clone();
+        let component_name: Vec<String> = target_component
+            .clone()
+            .into_iter()
+            .map(|tt| tt.to_string())
+            .collect();
+        let component_name = component_name.join("");
 
         quote! {
-            // TODO: Add this back in once Outline is PartialEq
-            // let Some(mut #target_attr) = world.get_mut::<#component_type>(entity) else {
-            //     warn!(
-            //         "Failed to set {} property on entity {}: No {} component found!",
-            //         #target_attr_name,
-            //         entity,
-            //         #component_name,
-            //     );
-            //     return;
-            // };
+            let Some(mut #target_attr) = world.get_mut::<#component_type>(entity) else {
+                warn!(
+                    "Failed to set {} property on entity {}: No {} component found!",
+                    #target_attr_name,
+                    entity,
+                    #component_name,
+                );
+                return;
+            };
 
-            // if *(#target_attr.bypass_change_detection()) != self.#target_attr {
+            if *(#target_attr.bypass_change_detection()) != self.#target_attr {
                 world.entity_mut(entity).insert(self.#target_attr);
-            // }
+            }
         }
     } else {
         quote! {
