@@ -27,7 +27,6 @@ fn main() {
         .add_plugins(OutlinedBlockPlugin)
         .add_plugins(TextureAtlasInteractionPlugin)
         .init_resource::<CurrentPage>()
-        .init_resource::<IconCache>()
         .init_state::<Page>()
         .add_plugins(HierarchyTreeViewPlugin)
         .add_plugins(SceneViewPlugin)
@@ -264,22 +263,32 @@ impl TextureAtlasInteraction {
             .atlas_index(AnimatedVals {
                 enter_from: Some(0),
                 idle: 7,
-                idle_alt: Some(11),
-                hover: Some(12),
-                hover_alt: Some(16),
-                press: Some(29),
+                idle_alt: Some(0),
+                hover: Some(8),
+                hover_alt: Some(15),
+                press: Some(16),
+                press_alt: Some(23),
+                cancel: Some(31),
                 ..default()
             })
-            .copy_from(theme_data.interaction_animation)
-            .enter(0.8, Ease::Linear, 1.)
-            .idle(0.5, Ease::Linear, 0., 0., AnimationLoop::PingPongContinous)
-            .hover(0.5, Ease::Linear, 0., 0., AnimationLoop::PingPongContinous)
-            .press(1.3, Ease::Linear, 0.)
-            .cancel(0.5, Ease::Linear, 0.);
+            .enter(0.4, Ease::Linear, 0.)
+            .idle(0.4, Ease::Linear, 0., 0., AnimationLoop::PingPongContinous)
+            .pointer_enter(0.4, Ease::Linear, 0.)
+            .hover(0.4, Ease::Linear, 0., 0., AnimationLoop::PingPongContinous)
+            .pointer_leave(0.4, Ease::Linear, 0.)
+            .press(0.4, Ease::Linear, 0.)
+            .pressed(0.4, Ease::Linear, 0., 0., AnimationLoop::PingPongContinous)
+            .release(0.4, Ease::Linear, 0.)
+            .cancel(0.8, Ease::Linear, 0.)
+            .cancel_reset(1.2, Ease::InOutCubic, 0.1);
     }
 
     fn frame() -> impl Bundle {
-        (Name::new("TextureAtlasInteraction"), ImageBundle::default())
+        (
+            Name::new("TextureAtlasInteraction"),
+            ImageBundle::default(),
+            Outline::default(),
+        )
     }
 }
 
@@ -292,8 +301,8 @@ impl UiTextureAtlasInteractionExt for UiBuilder<'_, Entity> {
         let mut result = self.spawn((TextureAtlasInteraction::frame(), TextureAtlasInteraction));
         // TODO: Replace with sharable asset
         result.style().image(ImageSource::Atlas(
-            String::from("examples/30FPS_ASLight_05_Sparkle.png"),
-            TextureAtlasLayout::from_grid(UVec2::splat(192), 5, 6, None, None),
+            String::from("examples/Daisy.png"),
+            TextureAtlasLayout::from_grid(UVec2::splat(128), 8, 4, None, None),
         ));
 
         result
@@ -329,40 +338,13 @@ struct HierarchyPanel;
 #[reflect(Resource)]
 struct CurrentPage(Page);
 
-#[derive(Resource, Debug, Default, Reflect)]
-#[reflect(Resource)]
-struct IconCache(Vec<Handle<Image>>);
-
 #[derive(Component, Debug)]
 pub struct ThemeSwitch;
 
 #[derive(Component, Debug)]
 pub struct ThemeContrastSelect;
 
-fn setup(
-    asset_server: Res<AssetServer>,
-    mut icon_cache: ResMut<IconCache>,
-    mut commands: Commands,
-) {
-    // Workaround for disappearing icons when they are despawned and spawned back in during the same frame
-    // Should be fixed in Bevy > 0.13
-    let icons_to_cache: Vec<&str> = vec![
-        "embedded://sickle_ui/icons/checkmark.png",
-        "embedded://sickle_ui/icons/chevron_down.png",
-        "embedded://sickle_ui/icons/chevron_left.png",
-        "embedded://sickle_ui/icons/chevron_right.png",
-        "embedded://sickle_ui/icons/chevron_up.png",
-        "embedded://sickle_ui/icons/close.png",
-        "embedded://sickle_ui/icons/exit_white.png",
-        "embedded://sickle_ui/icons/popout_white.png",
-        "embedded://sickle_ui/icons/redo_white.png",
-        "embedded://sickle_ui/icons/submenu_white.png",
-    ];
-
-    for icon in icons_to_cache.iter() {
-        icon_cache.0.push(asset_server.load(*icon));
-    }
-
+fn setup(mut commands: Commands) {
     // The main camera which will render UI
     let main_camera = commands
         .spawn((
