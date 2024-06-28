@@ -299,7 +299,6 @@ pub trait UiTextureAtlasInteractionExt {
 impl UiTextureAtlasInteractionExt for UiBuilder<'_, Entity> {
     fn atlas_example(&mut self) -> UiBuilder<Entity> {
         let mut result = self.spawn((TextureAtlasInteraction::frame(), TextureAtlasInteraction));
-        // TODO: Replace with sharable asset
         result.style().image(ImageSource::Atlas(
             String::from("examples/Daisy.png"),
             TextureAtlasLayout::from_grid(UVec2::splat(128), 8, 4, None, None),
