@@ -422,7 +422,10 @@ You can then use your widget after bringing it into scope:
 use my_widget::UiMyWidgetExt;
 
 fn setup(mut commands: Commands) {
-  commands.ui_builder(UiRoot).my_widget(|my_widget|{
+  // TODO: get your root entity where your widget will be added.
+  // This could come from a query for example.
+  let root_entity: Entity;
+  commands.ui_builder(root_entity).my_widget(|my_widget|{
     // ... do more here!
   });
 }
