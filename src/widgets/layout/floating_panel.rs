@@ -532,7 +532,7 @@ impl FloatingPanelConfig {
     }
 }
 
-#[derive(Component, Clone, Copy, Debug, Reflect)]
+#[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 pub struct FloatingPanel {
     size: Vec2,

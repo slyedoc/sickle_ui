@@ -91,7 +91,7 @@ impl Plugin for EntityComponentTagPlugin {
     }
 }
 
-#[derive(Component, Clone, Debug, Reflect)]
+#[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 pub struct EntityComponentTag {
     label: Entity,

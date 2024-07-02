@@ -572,7 +572,7 @@ pub struct SizedZoneConfig {
     pub min_size: f32,
 }
 
-#[derive(Component, Clone, Debug, Reflect)]
+#[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 pub struct SizedZone {
     size_percent: f32,

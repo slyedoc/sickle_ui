@@ -90,7 +90,7 @@ impl Into<MenuItemConfig> for ToggleMenuItemConfig {
     }
 }
 
-#[derive(Component, Clone, Debug, Reflect)]
+#[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 pub struct ToggleMenuItem {
     pub checked: bool,
@@ -198,7 +198,7 @@ impl ToggleMenuItem {
 
 pub trait UiToggleMenuItemExt {
     /// A toggle menu item in a menu, context menu, or submenu
-    /// 
+    ///
     /// ### PseudoState usage
     /// - `PseudoState::Checked` is used when the item is checked
     fn toggle_menu_item(&mut self, config: ToggleMenuItemConfig) -> UiBuilder<Entity>;

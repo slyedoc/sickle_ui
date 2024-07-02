@@ -76,7 +76,7 @@ fn update_foldable_container(
     }
 }
 
-#[derive(Component, Clone, Debug, Reflect)]
+#[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 pub struct Foldable {
     pub open: bool,

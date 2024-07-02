@@ -20,7 +20,6 @@ fn main() {
             ..default()
         }))
         .add_plugins(SickleUiPlugin)
-        .init_resource::<IconCache>()
         .add_plugins(HierarchyTreeViewPlugin)
         .add_systems(Startup, setup.in_set(UiStartupSet))
         .run();
@@ -32,34 +31,7 @@ pub struct UiCamera;
 #[derive(SystemSet, Clone, Hash, Debug, Eq, PartialEq)]
 pub struct UiStartupSet;
 
-#[derive(Resource, Debug, Default, Reflect)]
-#[reflect(Resource)]
-struct IconCache(Vec<Handle<Image>>);
-
-fn setup(
-    asset_server: Res<AssetServer>,
-    mut icon_cache: ResMut<IconCache>,
-    mut commands: Commands,
-) {
-    // Workaround for disappearing icons when they are despawned and spawned back in during the same frame
-    // Should be fixed in Bevy > 0.13
-    let icons_to_cache: Vec<&str> = vec![
-        "embedded://sickle_ui/icons/checkmark.png",
-        "embedded://sickle_ui/icons/chevron_down.png",
-        "embedded://sickle_ui/icons/chevron_left.png",
-        "embedded://sickle_ui/icons/chevron_right.png",
-        "embedded://sickle_ui/icons/chevron_up.png",
-        "embedded://sickle_ui/icons/close.png",
-        "embedded://sickle_ui/icons/exit_white.png",
-        "embedded://sickle_ui/icons/popout_white.png",
-        "embedded://sickle_ui/icons/redo_white.png",
-        "embedded://sickle_ui/icons/submenu_white.png",
-    ];
-
-    for icon in icons_to_cache.iter() {
-        icon_cache.0.push(asset_server.load(*icon));
-    }
-
+fn setup(mut commands: Commands) {
     // The main camera which will render UI
     let main_camera = commands
         .spawn((

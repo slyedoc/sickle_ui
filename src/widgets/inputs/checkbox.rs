@@ -49,7 +49,7 @@ fn update_checkbox(
     }
 }
 
-#[derive(Component, Clone, Debug, Reflect)]
+#[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 pub struct Checkbox {
     pub checked: bool,

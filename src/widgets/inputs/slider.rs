@@ -293,7 +293,7 @@ impl Default for SliderConfig {
     }
 }
 
-#[derive(Component, Clone, Debug, Reflect)]
+#[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 pub struct Slider {
     ratio: f32,

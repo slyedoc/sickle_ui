@@ -37,7 +37,6 @@ fn main() {
             LogDiagnosticsPlugin::default(),
         ))
         .add_plugins(SickleUiPlugin)
-        .init_resource::<IconCache>()
         .add_plugins(ComponentThemePlugin::<ThemeTestBox>::new())
         .add_systems(Startup, setup)
         .add_systems(Update, (tick_dynamic_style_stopwatch, toggle_theme_data))
@@ -72,11 +71,7 @@ pub struct UiCamera;
 #[derive(Component)]
 pub struct TestStopwatch(Stopwatch);
 
-#[derive(Resource, Debug, Default, Reflect)]
-#[reflect(Resource)]
-struct IconCache(Vec<Handle<Image>>);
-
-#[derive(Component, Clone, UiContext)]
+#[derive(Component, UiContext)]
 pub struct ThemeTestBox;
 
 impl DefaultTheme for ThemeTestBox {
@@ -222,30 +217,7 @@ impl ThemeTestBox {
     }
 }
 
-fn setup(
-    asset_server: Res<AssetServer>,
-    mut icon_cache: ResMut<IconCache>,
-    mut commands: Commands,
-) {
-    // Workaround for disappearing icons when they are despawned and spawned back in during the same frame
-    // Should be fixed in Bevy > 0.13
-    let icons_to_cache: Vec<&str> = vec![
-        "embedded://sickle_ui/icons/checkmark.png",
-        "embedded://sickle_ui/icons/chevron_down.png",
-        "embedded://sickle_ui/icons/chevron_left.png",
-        "embedded://sickle_ui/icons/chevron_right.png",
-        "embedded://sickle_ui/icons/chevron_up.png",
-        "embedded://sickle_ui/icons/close.png",
-        "embedded://sickle_ui/icons/exit_white.png",
-        "embedded://sickle_ui/icons/popout_white.png",
-        "embedded://sickle_ui/icons/redo_white.png",
-        "embedded://sickle_ui/icons/submenu_white.png",
-    ];
-
-    for icon in icons_to_cache.iter() {
-        icon_cache.0.push(asset_server.load(*icon));
-    }
-
+fn setup(mut commands: Commands) {
     // The main camera which will render UI
     let main_camera = commands
         .spawn((

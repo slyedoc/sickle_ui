@@ -172,7 +172,7 @@ pub struct DropdownPanelPlacement {
 #[reflect(Component)]
 pub struct DropdownOptions(Vec<String>);
 
-#[derive(Component, Clone, Debug, Reflect)]
+#[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 pub struct DropdownOption {
     dropdown: Entity,
@@ -272,7 +272,7 @@ impl Default for DropdownPanel {
     }
 }
 
-#[derive(Component, Clone, Debug, Reflect)]
+#[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 pub struct Dropdown {
     value: Option<usize>,

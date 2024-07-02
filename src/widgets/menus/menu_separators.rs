@@ -21,7 +21,7 @@ impl Plugin for MenuSeparatorPlugin {
     }
 }
 
-#[derive(Component, Clone, Copy, Debug, Default, Reflect, UiContext)]
+#[derive(Component, Debug, Default, Reflect, UiContext)]
 #[reflect(Component)]
 pub struct MenuSeparator;
 
@@ -71,7 +71,7 @@ impl UiMenuSeparatorExt for UiBuilder<'_, (Entity, MenuBar)> {
     }
 }
 
-#[derive(Component, Clone, Copy, Debug, Default, Reflect, UiContext)]
+#[derive(Component, Debug, Default, Reflect, UiContext)]
 #[reflect(Component)]
 pub struct MenuItemSeparator;
 

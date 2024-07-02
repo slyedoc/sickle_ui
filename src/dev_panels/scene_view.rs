@@ -421,7 +421,7 @@ impl Default for ActiveSceneViews {
     }
 }
 
-#[derive(Component, Clone, Debug, Reflect, UiContext)]
+#[derive(Component, Debug, Reflect, UiContext)]
 #[reflect(Component)]
 struct SceneControls {
     scene_view: Entity,

@@ -678,7 +678,7 @@ impl Default for DockingZone {
     }
 }
 
-#[derive(Component, Clone, Debug, Reflect, UiContext)]
+#[derive(Component, Debug, Reflect, UiContext)]
 #[reflect(Component)]
 pub struct DockingZoneHighlight {
     zone: Entity,

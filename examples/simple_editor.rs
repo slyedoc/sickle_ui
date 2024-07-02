@@ -69,7 +69,7 @@ impl Plugin for UiFooterRootNodePlugin {
     }
 }
 
-#[derive(Component, Clone, Debug, Default, Reflect, UiContext)]
+#[derive(Component, Debug, Default, Reflect, UiContext)]
 #[reflect(Component)]
 pub struct UiFooterRootNode;
 
@@ -130,7 +130,7 @@ impl Plugin for OutlinedBlockPlugin {
     }
 }
 
-#[derive(Component, Clone, Debug, Default, Reflect, UiContext)]
+#[derive(Component, Debug, Default, Reflect, UiContext)]
 #[reflect(Component)]
 pub struct OutlinedBlock;
 
@@ -227,7 +227,7 @@ impl Plugin for TextureAtlasInteractionPlugin {
     }
 }
 
-#[derive(Component, Clone, Debug, Default, Reflect, UiContext)]
+#[derive(Component, Debug, Default, Reflect, UiContext)]
 #[reflect(Component)]
 pub struct TextureAtlasInteraction;
 

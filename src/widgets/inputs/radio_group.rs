@@ -105,7 +105,7 @@ fn update_radio_button(
     }
 }
 
-#[derive(Component, Clone, Debug, Reflect, UiContext)]
+#[derive(Component, Debug, Reflect, UiContext)]
 #[reflect(Component)]
 pub struct RadioGroup {
     pub selected: Option<usize>,
@@ -149,7 +149,7 @@ impl RadioGroup {
     }
 }
 
-#[derive(Component, Clone, Debug, Reflect)]
+#[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 pub struct RadioButton {
     pub index: usize,
