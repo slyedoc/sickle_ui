@@ -105,7 +105,7 @@ impl UiContext for Foldable {
             Foldable::BUTTON_LABEL => Ok(self.label),
             Foldable::CONTAINER => Ok(self.container),
             _ => Err(format!(
-                "{} doesn't exists for Foldable. Possible contexts: {:?}",
+                "{} doesn't exist for Foldable. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),

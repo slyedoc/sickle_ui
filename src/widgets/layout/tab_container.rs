@@ -671,7 +671,7 @@ impl UiContext for Tab {
             Tab::LABEL => Ok(self.label),
             Tab::PANEL => Ok(self.panel),
             _ => Err(format!(
-                "{} doesn't exists for Tab. Possible contexts: {:?}",
+                "{} doesn't exist for Tab. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),
@@ -960,7 +960,7 @@ impl UiContext for TabContainer {
         match target {
             TabContainer::TAB_BAR => Ok(self.bar),
             _ => Err(format!(
-                "{} doesn't exists for TabContainer. Possible contexts: {:?}",
+                "{} doesn't exist for TabContainer. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),

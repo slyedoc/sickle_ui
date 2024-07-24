@@ -607,7 +607,7 @@ impl UiContext for SizedZone {
         match target {
             SizedZone::RESIZE_HANDLES => Ok(self.resize_handles),
             _ => Err(format!(
-                "{} doesn't exists for SizedZone. Possible contexts: {:?}",
+                "{} doesn't exist for SizedZone. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),

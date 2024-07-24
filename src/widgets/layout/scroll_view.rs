@@ -404,7 +404,7 @@ impl UiContext for ScrollView {
             ScrollView::VERTICAL_SCROLL_BAR => Ok(self.vertical_scroll_bar),
             ScrollView::VERTICAL_SCROLL_HANDLE => Ok(self.vertical_scroll_bar_handle),
             _ => Err(format!(
-                "{} doesn't exists for ScrollView. Possible contexts: {:?}",
+                "{} doesn't exist for ScrollView. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),

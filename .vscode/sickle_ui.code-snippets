@@ -171,7 +171,7 @@
 			"		match target {",
 			"			${1:MyWidget}::LABEL => Ok(self.label),",
 			"			_ => Err(format!(",
-			"				\"{} doesn't exists for ${1:MyWidget}. Possible contexts: {:?}\",",
+			"				\"{} doesn't exist for ${1:MyWidget}. Possible contexts: {:?}\",",
 			"				target,",
 			"				self.contexts()",
 			"			)),",

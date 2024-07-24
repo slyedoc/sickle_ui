@@ -116,7 +116,7 @@ impl UiContext for EntityComponentTag {
         match target {
             EntityComponentTag::LABEL => Ok(self.label),
             _ => Err(format!(
-                "{} doesn't exists for EntityComponentTag. Possible contexts: {:?}",
+                "{} doesn't exist for EntityComponentTag. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),

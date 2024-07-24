@@ -182,7 +182,7 @@ impl UiContext for RadioButton {
             RadioButton::RADIOMARK => Ok(self.radiomark),
             RadioButton::LABEL => Ok(self.label),
             _ => Err(format!(
-                "{} doesn't exists for RadioButton. Possible contexts: {:?}",
+                "{} doesn't exist for RadioButton. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),

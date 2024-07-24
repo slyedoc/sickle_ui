@@ -691,7 +691,7 @@ impl UiContext for MyWidget {
         match target {
             MyWidget::LABEL => Ok(self.label),
             _ => Err(format!(
-                "{} doesn't exists for MyWidget. Possible contexts: {:?}",
+                "{} doesn't exist for MyWidget. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),
@@ -809,7 +809,7 @@ impl UiContext for MyWidget {
         match target {
             MyWidget::LABEL => Ok(self.label),
             _ => Err(format!(
-                "{} doesn't exists for MyWidget. Possible contexts: {:?}",
+                "{} doesn't exist for MyWidget. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),

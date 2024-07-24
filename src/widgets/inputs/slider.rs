@@ -333,7 +333,7 @@ impl UiContext for Slider {
             Slider::READOUT_CONTAINER => Ok(self.readout_container),
             Slider::READOUT => Ok(self.readout),
             _ => Err(format!(
-                "{} doesn't exists for Slider. Possible contexts: {:?}",
+                "{} doesn't exist for Slider. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),

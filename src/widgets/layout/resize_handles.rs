@@ -203,7 +203,7 @@ impl UiContext for ResizeHandles {
             ResizeHandles::HANDLE_WEST => Ok(self.handle_west),
             ResizeHandles::HANDLE_NORTH_WEST => Ok(self.handle_north_west),
             _ => Err(format!(
-                "{} doesn't exists for ResizeHandles. Possible contexts: {:?}",
+                "{} doesn't exist for ResizeHandles. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),

@@ -587,7 +587,7 @@ impl UiContext for FloatingPanel {
             FloatingPanel::CLOSE_BUTTON => Ok(self.close_button),
             FloatingPanel::CONTENT_VIEW => Ok(self.content_view),
             _ => Err(format!(
-                "{} doesn't exists for FloatingPanel. Possible contexts: {:?}",
+                "{} doesn't exist for FloatingPanel. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),

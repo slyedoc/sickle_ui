@@ -128,7 +128,7 @@ impl UiContext for MenuItem {
             MenuItem::SHORTCUT => Ok(self.shortcut),
             MenuItem::TRAILING_ICON => Ok(self.trailing),
             _ => Err(format!(
-                "{} doesn't exists for MenuItem. Possible contexts: {:?}",
+                "{} doesn't exist for MenuItem. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),

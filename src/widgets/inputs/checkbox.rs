@@ -76,7 +76,7 @@ impl UiContext for Checkbox {
             Checkbox::CHECKMARK => Ok(self.checkmark),
             Checkbox::LABEL => Ok(self.label),
             _ => Err(format!(
-                "{} doesn't exists for Checkbox. Possible contexts: {:?}",
+                "{} doesn't exist for Checkbox. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),

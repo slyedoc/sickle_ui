@@ -184,7 +184,7 @@ impl UiContext for Menu {
             Menu::LABEL => Ok(self.label),
             Menu::CONTAINER => Ok(self.container),
             _ => Err(format!(
-                "{} doesn't exists for Menu. Possible contexts: {:?}",
+                "{} doesn't exist for Menu. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),

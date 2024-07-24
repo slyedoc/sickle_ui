@@ -201,7 +201,7 @@ impl UiContext for DropdownOption {
         match target {
             DropdownOption::LABEL => Ok(self.label),
             _ => Err(format!(
-                "{} doesn't exists for DropdownOption. Possible contexts: {:?}",
+                "{} doesn't exist for DropdownOption. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),
@@ -321,7 +321,7 @@ impl UiContext for Dropdown {
             Dropdown::SCROLL_VIEW => Ok(self.scroll_view),
             Dropdown::SCROLL_VIEW_CONTENT => Ok(self.scroll_view_content),
             _ => Err(format!(
-                "{} doesn't exists for Dropdown. Possible contexts: {:?}",
+                "{} doesn't exist for Dropdown. Possible contexts: {:?}",
                 target,
                 self.contexts()
             )),
