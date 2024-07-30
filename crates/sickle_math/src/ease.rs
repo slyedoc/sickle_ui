@@ -159,7 +159,7 @@ impl ValueEasing for f32 {
                     if x == 1. {
                         1.
                     } else {
-                        -2f32.powf(10. * x - 10.) * ((x * 10. - 10.75) * C4_F32).sin()
+                        -(2f32.powf(10. * x - 10.)) * ((x * 10. - 10.75) * C4_F32).sin()
                     }
                 }
             }
