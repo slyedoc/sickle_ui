@@ -21,13 +21,16 @@ impl Plugin for ScrollViewPlugin {
                     update_scroll_view_on_content_change,
                     update_scroll_view_on_scroll.after(ScrollableUpdate),
                     update_scroll_view_on_drag.after(DraggableUpdate),
-                    update_scroll_view_offset,
+                    update_scroll_view_offset.in_set(ScrollViewOffsetUpdate),
                     update_scroll_view_layout.in_set(ScrollViewLayoutUpdate),
                 )
                     .chain(),
             );
     }
 }
+
+#[derive(SystemSet, Clone, Eq, Debug, Hash, PartialEq)]
+pub struct ScrollViewOffsetUpdate;
 
 #[derive(SystemSet, Clone, Eq, Debug, Hash, PartialEq)]
 pub struct ScrollViewLayoutUpdate;
@@ -346,6 +349,12 @@ impl Default for ScrollViewContent {
     }
 }
 
+impl ScrollViewContent {
+    pub fn scroll_view(&self) -> Entity {
+        self.scroll_view
+    }
+}
+
 #[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 pub struct ScrollViewViewport {
@@ -360,6 +369,12 @@ impl Default for ScrollViewViewport {
     }
 }
 
+impl ScrollViewViewport {
+    pub fn scroll_view(&self) -> Entity {
+        self.scroll_view
+    }
+}
+
 #[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 pub struct ScrollView {
@@ -369,7 +384,12 @@ pub struct ScrollView {
     horizontal_scroll_bar_handle: Entity,
     vertical_scroll_bar: Entity,
     vertical_scroll_bar_handle: Entity,
-    scroll_offset: Vec2,
+    /// Can be used to control the scroll offset of the scroll view
+    ///
+    /// If updated before `ScrollViewOffsetUpdate` the change will be
+    /// made in the same frame. It is clamped to the scroll overflow,
+    /// so it is safe to set it to any value.
+    pub scroll_offset: Vec2,
     overflow: Vec2,
     visible_ratio: Vec2,
     restricted_to: Option<ScrollAxis>,
@@ -437,8 +457,25 @@ impl ScrollView {
     pub const VERTICAL_SCROLL_BAR: &'static str = "VerticalScrollBar";
     pub const VERTICAL_SCROLL_HANDLE: &'static str = "VerticalScrollHandle";
 
+    /// The viewport that clips the content
     pub fn viewport_id(&self) -> Entity {
         self.viewport
+    }
+
+    /// The container of the content that will be scrolled when it overflows the viewport
+    pub fn content_container_id(&self) -> Entity {
+        self.content_container
+    }
+
+    /// The amount of content hidden by the viewport
+    /// Update in ScrollViewOffsetUpdate
+    pub fn overflow(&self) -> Vec2 {
+        self.overflow
+    }
+
+    /// The 0-1 ratio of content visible in the viewport
+    pub fn visible_ratio(&self) -> Vec2 {
+        self.visible_ratio
     }
 
     pub fn theme() -> Theme<ScrollView> {
