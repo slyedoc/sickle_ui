@@ -38,6 +38,11 @@ bevy = { version = "0.14", default-features = false, features = [
     "bevy_text",
     "bevy_ui",
     "bevy_winit",
+    "bevy_pbr",
+    "bevy_gltf",
+    "bevy_scene",
+    "png",
+    "tonemapping_luts",
 ] }
 
 serde = { version = "1.0", features = ["derive"] }
