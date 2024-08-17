@@ -191,7 +191,7 @@ fn spawn_scene_view(
                 .min_width(Val::Px(250.));
             scene_controls
                 .row(|row| {
-                    row.radio_group(vec!["Natural", "Dim", "Night"], 1, true)
+                    row.radio_group(vec!["Natural", "Dim", "Night"], 1, false)
                         .insert(SceneLightControl {
                             scene_view: container,
                         });
@@ -514,9 +514,9 @@ struct SceneViewSettings {
 impl Default for SceneViewSettings {
     fn default() -> Self {
         Self {
-            do_rotate: true,
+            do_rotate: false,
             rotation_speed: 0.1,
-            light: 0,
+            light: 1,
         }
     }
 }
