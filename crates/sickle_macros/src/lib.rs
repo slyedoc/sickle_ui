@@ -19,11 +19,11 @@ use syn::DeriveInput;
 /// proc-macro2 = "1.0"
 /// ```
 ///
-/// See: https://doc.rust-lang.org/book/ch19-06-macros.html#procedural-macros-for-generating-code-from-attributes
+/// See: <https://doc.rust-lang.org/book/ch19-06-macros.html#procedural-macros-for-generating-code-from-attributes>
 ///
 /// # Usage
 ///
-/// See it in action: https://youtu.be/s1lQD-R_kqg
+/// See it in action: <https://youtu.be/s1lQD-R_kqg>
 ///
 /// ```
 /// #[derive(Component, EventHandler)]
