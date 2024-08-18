@@ -260,7 +260,7 @@ impl LogHierarchyExt for EntityCommands<'_> {
     /// }));
     /// ```
     /// ## Output Example
-    /// ```
+    /// <pre>
     /// ╚══ Entity 254v2:
     ///     ║      └── Node
     ///     ╠══ Entity 252v2:
@@ -275,7 +275,7 @@ impl LogHierarchyExt for EntityCommands<'_> {
     ///     ║                  └── Node
     ///     ╚══ Entity 292v1:
     ///                └── Node
-    /// ```
+    /// </pre>
     fn log_hierarchy(&mut self, component_filter: Option<fn(ComponentInfo) -> bool>) -> &mut Self {
         self.add(LogHierarchy {
             level: 0,

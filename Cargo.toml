@@ -43,6 +43,7 @@ bevy = { version = "0.14", default-features = false, features = [
     "bevy_scene",
     "png",
     "tonemapping_luts",
+    "x11",
 ] }
 
 serde = { version = "1.0", features = ["derive"] }
