@@ -1,3 +1,5 @@
+use std::ops::DerefMut;
+
 use bevy::{
     prelude::*,
     ui::{ContentSize, FocusPolicy, RelativeCursorPosition},
@@ -38,6 +40,7 @@ impl Plugin for FloatingPanelPlugin {
                     update_panel_on_title_drag,
                     handle_window_resize.run_if(window_resized),
                     update_panel_layout,
+                    touch_new_floating_panels.run_if(panel_added),
                 )
                     .chain()
                     .in_set(FloatingPanelUpdate),
@@ -413,6 +416,14 @@ fn update_panel_layout(
         } else if let Some(index) = panel.z_index {
             commands.style(entity).z_index(ZIndex::Global(index as i32));
         }
+    }
+}
+
+// New floating panels don't have node sizes calculated which prevents resize handles to be placed properly
+// This is a crude way of re-triggering systems that are based on Changed<FloatingPanel>s
+fn touch_new_floating_panels(mut q_panels: Query<&mut FloatingPanel, Added<FloatingPanel>>) {
+    for mut panel in &mut q_panels {
+        panel.deref_mut();
     }
 }
 
