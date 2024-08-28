@@ -15,9 +15,9 @@ use std::{
 };
 
 use bevy::{prelude::*, ui::UiSystem};
-
 use dynamic_style::{DynamicStyle, DynamicStylePlugin};
 use pseudo_state::{AutoPseudoStatePlugin, PseudoState, PseudoStates};
+use theme_colors::{loader::ThemeColorsLoader, ThemeColors};
 use theme_data::ThemeData;
 
 use crate::{prelude::UiBuilder, ui_commands::RefreshThemeExt, ui_style::builder::StyleBuilder};
@@ -55,6 +55,8 @@ impl Plugin for ThemePlugin {
         )
         .init_resource::<ThemeData>()
         .init_resource::<ThemeRegistry>()
+        .init_asset::<ThemeColors>()
+        .init_asset_loader::<ThemeColorsLoader>()
         .add_plugins((AutoPseudoStatePlugin, DynamicStylePlugin));
     }
 }
@@ -182,9 +184,10 @@ impl<C> PseudoTheme<C> {
 
     pub fn count_match(&self, node_states: &Vec<PseudoState>) -> usize {
         match &self.state {
-            // Only consider pseudo themes that are specific to an inclusive substet of the themed element's pseudo states.
-            // A theme for [Checked, Disabled] will apply to elements with [Checked, Disabled, FirstChild],
-            // but will not apply to elements with [Checked] (because the theme targets more specific elements)
+            // Only consider pseudo themes that are specific to an inclusive substet of the themed
+            // element's pseudo states. A theme for [Checked, Disabled] will apply to
+            // elements with [Checked, Disabled, FirstChild], but will not apply to
+            // elements with [Checked] (because the theme targets more specific elements)
             // or [Checked, FirstChild] (because they are disjoint)
             Some(targeted_states) => match targeted_states
                 .iter()
@@ -310,8 +313,8 @@ where
 }
 
 pub trait InsertThemedComponentExt {
-    /// Inserts `C` as a component to the entity and checks if [`ComponentThemePlugin<C>`](ComponentThemePlugin)
-    /// was added to the app.
+    /// Inserts `C` as a component to the entity and checks if
+    /// [`ComponentThemePlugin<C>`](ComponentThemePlugin) was added to the app.
     fn insert_themed_component<C: DefaultTheme + Component>(&mut self, component: C) -> &mut Self;
 }
 

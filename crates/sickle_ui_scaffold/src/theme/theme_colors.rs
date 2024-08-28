@@ -427,7 +427,7 @@ pub struct ColorPalettes {
 
 // TODO: write asset loader for theme colors and load it from a material-theme.json
 /// Loosly Follows Material3 theme format
-#[derive(Clone, Debug, Reflect, Serialize, Deserialize)]
+#[derive(Asset, Clone, Debug, Reflect, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ThemeColors {
     pub description: String,
@@ -862,6 +862,8 @@ impl Default for ThemeColors {
     }
 }
 
+/// Custom serialization and deserialization functions necessary for the loading and saving of
+/// [`Color`] structs to their hex string representation.
 mod serialize_color {
 
     use bevy::color::{Color, Srgba};
@@ -908,6 +910,33 @@ mod serialize_color {
             Ok(Color::Srgba(
                 Srgba::hex(v).map_err(|err| Error::custom(err.to_string()))?,
             ))
+        }
+    }
+}
+
+pub mod loader {
+    use bevy::asset::{io::Reader, AssetLoader, AsyncReadExt, LoadContext};
+
+    use super::ThemeColors;
+
+    #[derive(Default)]
+    pub(crate) struct ThemeColorsLoader;
+
+    impl AssetLoader for ThemeColorsLoader {
+        type Asset = ThemeColors;
+        type Settings = ();
+        type Error = std::io::Error;
+
+        async fn load<'a>(
+            &'a self,
+            reader: &'a mut Reader<'_>,
+            _settings: &'a Self::Settings,
+            _load_context: &'a mut LoadContext<'_>,
+        ) -> Result<Self::Asset, Self::Error> {
+            let mut bytes = Vec::new();
+            reader.read_to_end(&mut bytes).await?;
+            let theme_colors_asset = serde_json::from_slice(&bytes)?;
+            Ok(theme_colors_asset)
         }
     }
 }
