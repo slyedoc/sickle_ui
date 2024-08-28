@@ -1,8 +1,5 @@
 use bevy::prelude::*;
-
 use sickle_math::ease::Ease;
-
-use crate::ui_style::builder::StyleBuilder;
 
 use super::{
     icons::Icons,
@@ -11,6 +8,7 @@ use super::{
     theme_spacing::ThemeSpacing,
     typography::ThemeTypography,
 };
+use crate::ui_style::builder::StyleBuilder;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Reflect)]
 pub enum Contrast {
@@ -98,8 +96,8 @@ impl ThemeData {
     /// Returns the scheme colors of the current active scheme / contrast
     pub fn colors(&self) -> SchemeColors {
         match self.active_scheme {
-            Scheme::Light(contrast) => self.colors.schemes.light.contrast(contrast),
-            Scheme::Dark(contrast) => self.colors.schemes.dark.contrast(contrast),
+            Scheme::Light(contrast) => self.colors.schemes.light_contrast(contrast),
+            Scheme::Dark(contrast) => self.colors.schemes.dark_contrast(contrast),
         }
     }
 }
