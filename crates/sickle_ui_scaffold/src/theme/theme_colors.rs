@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use serde::{Deserialize, Serialize};
 
 use super::theme_data::Contrast;
 
@@ -66,7 +67,7 @@ pub enum On {
     InverseSurface,
 }
 
-#[derive(Clone, Debug, Default, Reflect)]
+#[derive(Clone, Debug, Default, Reflect, Serialize, Deserialize)]
 pub struct ExtendedColor {
     pub name: String,
     pub color: Color,
@@ -74,65 +75,187 @@ pub struct ExtendedColor {
     pub harmonized: bool,
 }
 
-#[derive(Clone, Copy, Debug, Default, Reflect)]
+#[derive(Clone, Copy, Debug, Default, Reflect, Serialize, Deserialize)]
 pub struct CoreColors {
+    #[serde(with = "serialize_color")]
     pub primary: Color,
+
+    #[serde(
+        serialize_with = "serialize_color::serialize",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub secondary: Option<Color>,
+
+    #[serde(
+        serialize_with = "serialize_color::serialize",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tertiary: Option<Color>,
+
+    #[serde(
+        serialize_with = "serialize_color::serialize",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub error: Option<Color>,
+
+    #[serde(
+        serialize_with = "serialize_color::serialize",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub neutral: Option<Color>,
+
+    #[serde(
+        serialize_with = "serialize_color::serialize",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub neutral_variant: Option<Color>,
 }
 
-#[derive(Clone, Copy, Debug, Default, Reflect)]
+#[derive(Clone, Copy, Debug, Default, Reflect, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SchemeColors {
+    #[serde(with = "serialize_color")]
     pub primary: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_primary: Color,
+
+    #[serde(with = "serialize_color")]
     pub primary_container: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_primary_container: Color,
+
+    #[serde(with = "serialize_color")]
     pub secondary: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_secondary: Color,
+
+    #[serde(with = "serialize_color")]
     pub secondary_container: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_secondary_container: Color,
+
+    #[serde(with = "serialize_color")]
     pub tertiary: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_tertiary: Color,
+
+    #[serde(with = "serialize_color")]
     pub tertiary_container: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_tertiary_container: Color,
+
+    #[serde(with = "serialize_color")]
     pub error: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_error: Color,
+
+    #[serde(with = "serialize_color")]
     pub error_container: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_error_container: Color,
+
+    #[serde(with = "serialize_color")]
     pub background: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_background: Color,
+
+    #[serde(with = "serialize_color")]
     pub surface: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_surface: Color,
+
+    #[serde(with = "serialize_color")]
     pub surface_variant: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_surface_variant: Color,
+
+    #[serde(with = "serialize_color")]
     pub outline: Color,
+
+    #[serde(with = "serialize_color")]
     pub outline_variant: Color,
+
+    #[serde(with = "serialize_color")]
     pub shadow: Color,
+
+    #[serde(with = "serialize_color")]
     pub scrim: Color,
+
+    #[serde(with = "serialize_color")]
     pub inverse_surface: Color,
+
+    #[serde(with = "serialize_color")]
     pub inverse_on_surface: Color,
+
+    #[serde(with = "serialize_color")]
     pub inverse_primary: Color,
+
+    #[serde(with = "serialize_color")]
     pub primary_fixed: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_primary_fixed: Color,
+
+    #[serde(with = "serialize_color")]
     pub primary_fixed_dim: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_primary_fixed_variant: Color,
+
+    #[serde(with = "serialize_color")]
     pub secondary_fixed: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_secondary_fixed: Color,
+
+    #[serde(with = "serialize_color")]
     pub secondary_fixed_dim: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_secondary_fixed_variant: Color,
+
+    #[serde(with = "serialize_color")]
     pub tertiary_fixed: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_tertiary_fixed: Color,
+
+    #[serde(with = "serialize_color")]
     pub tertiary_fixed_dim: Color,
+
+    #[serde(with = "serialize_color")]
     pub on_tertiary_fixed_variant: Color,
+
+    #[serde(with = "serialize_color")]
     pub surface_dim: Color,
+
+    #[serde(with = "serialize_color")]
     pub surface_bright: Color,
+
+    #[serde(with = "serialize_color")]
     pub surface_container_lowest: Color,
+
+    #[serde(with = "serialize_color")]
     pub surface_container_low: Color,
+
+    #[serde(with = "serialize_color")]
     pub surface_container: Color,
+
+    #[serde(with = "serialize_color")]
     pub surface_container_high: Color,
+
+    #[serde(with = "serialize_color")]
     pub surface_container_highest: Color,
 }
 
@@ -206,7 +329,8 @@ impl SchemeColors {
     }
 }
 
-#[derive(Clone, Copy, Debug, Default, Reflect)]
+#[derive(Clone, Copy, Debug, Default, Reflect, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub struct ColorScheme {
     pub colors: SchemeColors,
     pub medium_contrast: SchemeColors,
@@ -223,35 +347,74 @@ impl ColorScheme {
     }
 }
 
-#[derive(Clone, Copy, Debug, Default, Reflect)]
+#[derive(Clone, Copy, Debug, Default, Reflect, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub struct ColorSchemes {
+    #[serde(flatten)]
     pub light: ColorScheme,
+    #[serde(flatten)]
     pub dark: ColorScheme,
 }
 
-#[derive(Clone, Copy, Debug, Default, Reflect)]
+#[derive(Clone, Copy, Debug, Default, Reflect, Serialize, Deserialize)]
 pub struct ColorPalette {
+    #[serde(rename = "0", with = "serialize_color")]
     pub p_0: Color,
+
+    #[serde(rename = "5", with = "serialize_color")]
     pub p_5: Color,
+
+    #[serde(rename = "10", with = "serialize_color")]
     pub p_10: Color,
+
+    #[serde(rename = "15", with = "serialize_color")]
     pub p_15: Color,
+
+    #[serde(rename = "20", with = "serialize_color")]
     pub p_20: Color,
+
+    #[serde(rename = "25", with = "serialize_color")]
     pub p_25: Color,
+
+    #[serde(rename = "30", with = "serialize_color")]
     pub p_30: Color,
+
+    #[serde(rename = "35", with = "serialize_color")]
     pub p_35: Color,
+
+    #[serde(rename = "40", with = "serialize_color")]
     pub p_40: Color,
+
+    #[serde(rename = "50", with = "serialize_color")]
     pub p_50: Color,
+
+    #[serde(rename = "60", with = "serialize_color")]
     pub p_60: Color,
+
+    #[serde(rename = "70", with = "serialize_color")]
     pub p_70: Color,
+
+    #[serde(rename = "80", with = "serialize_color")]
     pub p_80: Color,
+
+    #[serde(rename = "90", with = "serialize_color")]
     pub p_90: Color,
+
+    #[serde(rename = "95", with = "serialize_color")]
     pub p_95: Color,
+
+    #[serde(rename = "98", with = "serialize_color")]
     pub p_98: Color,
+
+    #[serde(rename = "99", with = "serialize_color")]
     pub p_99: Color,
+
+    #[serde(rename = "100", with = "serialize_color")]
     pub p_100: Color,
 }
 
-#[derive(Clone, Copy, Debug, Default, Reflect)]
+#[derive(Clone, Copy, Debug, Default, Reflect, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub struct ColorPalettes {
     pub primary: ColorPalette,
     pub secondary: ColorPalette,
@@ -262,10 +425,12 @@ pub struct ColorPalettes {
 
 // TODO: write asset loader for theme colors and load it from a material-theme.json
 /// Loosly Follows Material3 theme format
-#[derive(Clone, Debug, Reflect)]
+#[derive(Clone, Debug, Reflect, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ThemeColors {
     pub description: String,
     // TODO: Generate colors from seed & core colors?
+    #[serde(with = "serialize_color")]
     pub seed: Color,
     pub core_colors: CoreColors,
     pub extended_colors: Vec<ExtendedColor>,
@@ -693,6 +858,56 @@ impl Default for ThemeColors {
                     p_100: Color::Srgba(Srgba::hex("FFFFFF").unwrap()),
                 },
             },
+        }
+    }
+}
+
+mod serialize_color {
+
+    use bevy::color::{Color, Srgba};
+    use serde::{
+        de::{Error, Visitor},
+        Deserializer, Serializer,
+    };
+
+    pub(super) fn serialize<S, T>(color: &T, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+        T: Into<Option<Color>> + Clone,
+    {
+        let color: Option<Color> = Into::into((*color).clone());
+        if let Some(color) = color {
+            let srgba = color.to_srgba();
+            let hex = srgba.to_hex();
+            serializer.serialize_str(&hex)
+        } else {
+            serializer.serialize_none()
+        }
+    }
+
+    pub(super) fn deserialize<'de, D>(deserializer: D) -> Result<Color, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_str(ColorVisitor)
+    }
+
+    struct ColorVisitor;
+
+    impl<'de> Visitor<'de> for ColorVisitor {
+        type Value = Color;
+
+        fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+            formatter.write_str("valid color hex string")
+        }
+
+        fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+        where
+            E: serde::de::Error,
+        {
+            Ok(Color::Srgba(
+                Srgba::hex(v).map_err(|err| Error::custom(err.to_string()))?,
+            ))
         }
     }
 }
