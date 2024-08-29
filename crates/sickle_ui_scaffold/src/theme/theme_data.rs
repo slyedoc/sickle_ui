@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 use sickle_math::ease::Ease;
 
+use crate::ui_style::builder::StyleBuilder;
+
 use super::{
     icons::Icons,
     style_animation::AnimationSettings,
@@ -8,7 +10,6 @@ use super::{
     theme_spacing::ThemeSpacing,
     typography::ThemeTypography,
 };
-use crate::ui_style::builder::StyleBuilder;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Reflect)]
 pub enum Contrast {
