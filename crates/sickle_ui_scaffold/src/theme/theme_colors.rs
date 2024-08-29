@@ -3,6 +3,85 @@ use serde::{Deserialize, Serialize};
 
 use super::theme_data::Contrast;
 
+/// Custom serialization and deserialization functions necessary for the loading and saving of
+/// [`Color`] structs to their hex string representation.
+mod serialize_color {
+
+    use bevy::color::{Color, Srgba};
+    use serde::{
+        de::{Error, Visitor},
+        Deserializer, Serializer,
+    };
+
+    pub(super) fn serialize<S, T>(color: &T, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+        T: Into<Option<Color>> + Clone,
+    {
+        let color: Option<Color> = Into::into((*color).clone());
+        if let Some(color) = color {
+            let srgba = color.to_srgba();
+            let hex = srgba.to_hex();
+            serializer.serialize_str(&hex)
+        } else {
+            serializer.serialize_none()
+        }
+    }
+
+    pub(super) fn deserialize<'de, D>(deserializer: D) -> Result<Color, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_str(ColorVisitor)
+    }
+
+    struct ColorVisitor;
+
+    impl<'de> Visitor<'de> for ColorVisitor {
+        type Value = Color;
+
+        fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+            formatter.write_str("valid color hex string")
+        }
+
+        fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+        where
+            E: serde::de::Error,
+        {
+            Ok(Color::Srgba(
+                Srgba::hex(v).map_err(|err| Error::custom(err.to_string()))?,
+            ))
+        }
+    }
+}
+
+pub mod loader {
+    use bevy::asset::{io::Reader, AssetLoader, AsyncReadExt, LoadContext};
+
+    use super::ThemeColors;
+
+    #[derive(Default)]
+    pub(crate) struct ThemeColorsLoader;
+
+    impl AssetLoader for ThemeColorsLoader {
+        type Asset = ThemeColors;
+        type Settings = ();
+        type Error = std::io::Error;
+
+        async fn load<'a>(
+            &'a self,
+            reader: &'a mut Reader<'_>,
+            _settings: &'a Self::Settings,
+            _load_context: &'a mut LoadContext<'_>,
+        ) -> Result<Self::Asset, Self::Error> {
+            let mut bytes = Vec::new();
+            reader.read_to_end(&mut bytes).await?;
+            let theme_colors_asset = serde_json::from_slice(&bytes)?;
+            Ok(theme_colors_asset)
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug)]
 pub enum Surface {
     Background,
@@ -858,85 +937,6 @@ impl Default for ThemeColors {
                     p_100: Color::Srgba(Srgba::hex("FFFFFF").unwrap()),
                 },
             },
-        }
-    }
-}
-
-/// Custom serialization and deserialization functions necessary for the loading and saving of
-/// [`Color`] structs to their hex string representation.
-mod serialize_color {
-
-    use bevy::color::{Color, Srgba};
-    use serde::{
-        de::{Error, Visitor},
-        Deserializer, Serializer,
-    };
-
-    pub(super) fn serialize<S, T>(color: &T, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-        T: Into<Option<Color>> + Clone,
-    {
-        let color: Option<Color> = Into::into((*color).clone());
-        if let Some(color) = color {
-            let srgba = color.to_srgba();
-            let hex = srgba.to_hex();
-            serializer.serialize_str(&hex)
-        } else {
-            serializer.serialize_none()
-        }
-    }
-
-    pub(super) fn deserialize<'de, D>(deserializer: D) -> Result<Color, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        deserializer.deserialize_str(ColorVisitor)
-    }
-
-    struct ColorVisitor;
-
-    impl<'de> Visitor<'de> for ColorVisitor {
-        type Value = Color;
-
-        fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-            formatter.write_str("valid color hex string")
-        }
-
-        fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
-        where
-            E: serde::de::Error,
-        {
-            Ok(Color::Srgba(
-                Srgba::hex(v).map_err(|err| Error::custom(err.to_string()))?,
-            ))
-        }
-    }
-}
-
-pub mod loader {
-    use bevy::asset::{io::Reader, AssetLoader, AsyncReadExt, LoadContext};
-
-    use super::ThemeColors;
-
-    #[derive(Default)]
-    pub(crate) struct ThemeColorsLoader;
-
-    impl AssetLoader for ThemeColorsLoader {
-        type Asset = ThemeColors;
-        type Settings = ();
-        type Error = std::io::Error;
-
-        async fn load<'a>(
-            &'a self,
-            reader: &'a mut Reader<'_>,
-            _settings: &'a Self::Settings,
-            _load_context: &'a mut LoadContext<'_>,
-        ) -> Result<Self::Asset, Self::Error> {
-            let mut bytes = Vec::new();
-            reader.read_to_end(&mut bytes).await?;
-            let theme_colors_asset = serde_json::from_slice(&bytes)?;
-            Ok(theme_colors_asset)
         }
     }
 }
