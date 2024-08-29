@@ -217,12 +217,12 @@ pub trait UiContext {
     /// Warning: If a context is a sub-widget with its own theme, it should not
     /// be included in the cleared contexts, nor should it be used for placement
     /// from the main entity. The behavior is undefined.
-    fn cleared_contexts(&self) -> Vec<&'static str> {
+    fn cleared_contexts(&self) -> impl Iterator<Item = &str> + '_ {
         self.contexts()
     }
 
-    fn contexts(&self) -> Vec<&'static str> {
-        vec![]
+    fn contexts(&self) -> impl Iterator<Item = &str> + '_ {
+        [].into_iter()
     }
 }
 

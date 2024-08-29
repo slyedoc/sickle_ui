@@ -693,12 +693,12 @@ impl UiContext for MyWidget {
             _ => Err(format!(
                 "{} doesn't exist for MyWidget. Possible contexts: {:?}",
                 target,
-                self.contexts()
+                Vec::from_iter(self.contexts())
             )),
         }
     }
 
-    fn contexts(&self) -> Vec<&'static str> {
+    fn contexts(&self) -> impl Iterator<Item = &str> + '_ {
         vec![MyWidget::LABEL]
     }
 }
@@ -811,12 +811,12 @@ impl UiContext for MyWidget {
             _ => Err(format!(
                 "{} doesn't exist for MyWidget. Possible contexts: {:?}",
                 target,
-                self.contexts()
+                Vec::from_iter(self.contexts())
             )),
         }
     }
 
-    fn contexts(&self) -> Vec<&'static str> {
+    fn contexts(&self) -> impl Iterator<Item = &str> + '_ {
         vec![MyWidget::LABEL]
     }
 }

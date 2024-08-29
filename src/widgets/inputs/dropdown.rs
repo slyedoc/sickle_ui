@@ -203,13 +203,13 @@ impl UiContext for DropdownOption {
             _ => Err(format!(
                 "{} doesn't exist for DropdownOption. Possible contexts: {:?}",
                 target,
-                self.contexts()
+                Vec::from_iter(self.contexts())
             )),
         }
     }
 
-    fn contexts(&self) -> Vec<&'static str> {
-        vec![DropdownOption::LABEL]
+    fn contexts(&self) -> impl Iterator<Item = &str> + '_ {
+        [DropdownOption::LABEL].into_iter()
     }
 }
 
@@ -323,19 +323,20 @@ impl UiContext for Dropdown {
             _ => Err(format!(
                 "{} doesn't exist for Dropdown. Possible contexts: {:?}",
                 target,
-                self.contexts()
+                Vec::from_iter(self.contexts())
             )),
         }
     }
 
-    fn contexts(&self) -> Vec<&'static str> {
-        vec![
+    fn contexts(&self) -> impl Iterator<Item = &str> + '_ {
+        [
             Dropdown::LABEL,
             Dropdown::ICON,
             Dropdown::PANEL,
             Dropdown::SCROLL_VIEW,
             Dropdown::SCROLL_VIEW_CONTENT,
         ]
+        .into_iter()
     }
 }
 

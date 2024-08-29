@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use smol_str::SmolStr;
 
 use crate::{prelude::FluxInteraction, theme::prelude::*};
 
@@ -66,8 +67,8 @@ impl AnimatedStyleBuilder<'_> {
 
 #[derive(Clone, Debug)]
 pub struct ContextStyleAttributeConfig {
-    placement: Option<&'static str>,
-    target: Option<&'static str>,
+    placement: Option<SmolStr>,
+    target: Option<SmolStr>,
     attribute: DynamicStyleAttribute,
 }
 
@@ -79,10 +80,10 @@ impl LogicalEq for ContextStyleAttributeConfig {
     }
 }
 
-#[derive(Debug)]
+#[derive(Default, Debug)]
 pub struct StyleBuilder {
-    placement: Option<&'static str>,
-    target: Option<&'static str>,
+    placement: Option<SmolStr>,
+    target: Option<SmolStr>,
     attributes: Vec<ContextStyleAttributeConfig>,
 }
 
@@ -112,11 +113,7 @@ impl From<StyleBuilder> for DynamicStyle {
 
 impl StyleBuilder {
     pub fn new() -> Self {
-        Self {
-            placement: None,
-            target: None,
-            attributes: vec![],
-        }
+        Self::default()
     }
 
     pub fn new_with_capacity(num_attributes: usize) -> Self {
@@ -146,8 +143,8 @@ impl StyleBuilder {
             }
             None => {
                 self.attributes.push(ContextStyleAttributeConfig {
-                    placement: self.placement,
-                    target: self.target,
+                    placement: self.placement.clone(),
+                    target: self.target.clone(),
                     attribute,
                 });
                 self.attributes.len() - 1
@@ -186,8 +183,8 @@ impl StyleBuilder {
         placement: impl Into<Option<&'static str>>,
         target: impl Into<Option<&'static str>>,
     ) -> &mut Self {
-        self.placement = placement.into();
-        self.target = target.into();
+        self.placement = placement.into().map(|p| SmolStr::new_static(p));
+        self.target = target.into().map(|p| SmolStr::new_static(p));
 
         self
     }
@@ -216,6 +213,11 @@ impl StyleBuilder {
     /// detected on it. This allows styling sub-components directly. It also allows detecting interactions
     /// on a sub-component and proxying it to the main entity or other sub-components.
     pub fn switch_placement(&mut self, placement: &'static str) -> &mut Self {
+        self.switch_placement_with(SmolStr::new_static(placement))
+    }
+
+    /// See [`Self::switch_placement`].
+    pub fn switch_placement_with(&mut self, placement: SmolStr) -> &mut Self {
         self.placement = Some(placement);
         self
     }
@@ -224,56 +226,103 @@ impl StyleBuilder {
     /// NOTE: The DynamicStyle will still be set on the main entity and interactions will be
     /// detected on it. This allows styling sub-components by proxy from the current placement.
     pub fn switch_target(&mut self, target: &'static str) -> &mut Self {
+        self.switch_target_with(SmolStr::new_static(target))
+    }
+
+    /// See [`Self::switch_target`].
+    pub fn switch_target_with(&mut self, target: SmolStr) -> &mut Self {
         self.target = Some(target);
         self
     }
 
-    pub fn convert_with(self, context: &impl UiContext) -> Vec<(Option<Entity>, DynamicStyle)> {
-        let mut placements: Vec<Option<&'static str>> =
-            Vec::with_capacity(context.contexts().len() + 1);
-        for attribute in self.attributes.iter() {
-            if !placements.contains(&attribute.placement) {
-                placements.push(attribute.placement);
-            }
-        }
+    pub fn convert_with(mut self, context: &impl UiContext) -> Vec<(Option<Entity>, DynamicStyle)> {
+        self.attributes
+            .sort_unstable_by(|a, b| a.placement.cmp(&b.placement));
+        let count = self
+            .attributes
+            .chunk_by(|a, b| a.placement == b.placement)
+            .count();
 
-        let mut result: Vec<(Option<Entity>, DynamicStyle)> = Vec::with_capacity(placements.len());
-        for placement in placements {
-            let mut placement_entity: Option<Entity> = None;
-
-            if let Some(target_placement) = placement {
-                let target_entity = match context.get(target_placement) {
-                    Ok(entity) => entity,
-                    Err(msg) => {
-                        warn!("{}", msg);
-                        continue;
-                    }
-                };
-
-                if target_entity == Entity::PLACEHOLDER {
-                    #[cfg(not(feature = "disable-ui-context-placeholder-warn"))]
-                    warn!("Entity::PLACEHOLDER returned for placement target!");
-
-                    continue;
-                } else {
-                    placement_entity = Some(target_entity);
-                }
-            }
-
-            result.push((
-                placement_entity,
-                DynamicStyle::copy_from(
-                    self.attributes
-                        .iter()
-                        .filter(|csac| csac.placement == placement)
-                        .fold(Vec::new(), |acc: Vec<ContextStyleAttribute>, csac| {
-                            StyleBuilder::fold_context_style_attributes(acc, csac, context)
-                        }),
-                ),
-            ));
-        }
-
+        let mut result: Vec<(Option<Entity>, DynamicStyle)> = Vec::with_capacity(count);
+        result.extend(self.convert_to_iter(context));
         result
+    }
+
+    pub fn convert_to_iter<'a>(
+        &'a mut self,
+        context: &'a impl UiContext,
+    ) -> impl Iterator<Item = (Option<Entity>, DynamicStyle)> + 'a {
+        self.convert_to_iter_with_buffers(context, Vec::default)
+    }
+
+    /// Converts to `DynamicStyles` using a buffer source for the `DynamicStyle` inner attribute buffer.
+    ///
+    /// This method is potentially non-allocating if the returned buffers have enough capacity and all attributes
+    /// can be cloned without allocating.
+    pub fn convert_to_iter_with_buffers<'a>(
+        &'a mut self,
+        context: &'a impl UiContext,
+        buffer_source: impl FnMut() -> Vec<ContextStyleAttribute> + 'a,
+    ) -> impl Iterator<Item = (Option<Entity>, DynamicStyle)> + 'a {
+        self.attributes
+            .sort_unstable_by(|a, b| a.placement.cmp(&b.placement));
+
+        self.attributes
+            .chunk_by(|a, b| a.placement == b.placement)
+            .scan(0, |index, placement_chunk| {
+                let start = *index;
+                let end = start + placement_chunk.len();
+                let placement = placement_chunk[0].placement.clone();
+                *index = end;
+                Some((start, end, placement))
+            })
+            .filter_map(|(start, end, placement)| {
+                let mut placement_entity: Option<Entity> = None;
+
+                if let Some(target_placement) = placement {
+                    let target_entity = match context.get(target_placement.as_str()) {
+                        Ok(entity) => entity,
+                        Err(msg) => {
+                            warn!("{}", msg);
+                            return None;
+                        }
+                    };
+
+                    if target_entity == Entity::PLACEHOLDER {
+                        #[cfg(not(feature = "disable-ui-context-placeholder-warn"))]
+                        warn!("Entity::PLACEHOLDER returned for placement target!");
+
+                        return None;
+                    } else {
+                        placement_entity = Some(target_entity);
+                    }
+                }
+
+                Some((start, end, placement_entity))
+            })
+            .scan(
+                buffer_source,
+                |buffer_source, (start, end, placement_entity)| {
+                    let mut attributes = (buffer_source)();
+                    attributes.clear();
+                    Some((
+                        placement_entity,
+                        DynamicStyle::copy_from(self.attributes[start..end].iter().fold(
+                            attributes,
+                            |acc: Vec<ContextStyleAttribute>, csac| {
+                                StyleBuilder::fold_context_style_attributes(acc, csac, context)
+                            },
+                        )),
+                    ))
+                },
+            )
+    }
+
+    /// Clears the builder without deallocating.
+    pub fn clear(&mut self) {
+        self.target = None;
+        self.placement = None;
+        self.attributes.clear();
     }
 
     fn fold_context_style_attributes(

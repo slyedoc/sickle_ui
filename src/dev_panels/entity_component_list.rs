@@ -118,13 +118,13 @@ impl UiContext for EntityComponentTag {
             _ => Err(format!(
                 "{} doesn't exist for EntityComponentTag. Possible contexts: {:?}",
                 target,
-                self.contexts()
+                Vec::from_iter(self.contexts())
             )),
         }
     }
 
-    fn contexts(&self) -> Vec<&'static str> {
-        vec![EntityComponentTag::LABEL]
+    fn contexts(&self) -> impl Iterator<Item = &str> + '_ {
+        [EntityComponentTag::LABEL].into_iter()
     }
 }
 

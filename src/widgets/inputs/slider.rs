@@ -351,13 +351,13 @@ impl UiContext for Slider {
             _ => Err(format!(
                 "{} doesn't exist for Slider. Possible contexts: {:?}",
                 target,
-                self.contexts()
+                Vec::from_iter(self.contexts())
             )),
         }
     }
 
-    fn contexts(&self) -> Vec<&'static str> {
-        vec![
+    fn contexts(&self) -> impl Iterator<Item = &str> + '_ {
+        [
             Slider::LABEL,
             Slider::BAR_CONTAINER,
             Slider::BAR,
@@ -365,6 +365,7 @@ impl UiContext for Slider {
             Slider::READOUT_CONTAINER,
             Slider::READOUT,
         ]
+        .into_iter()
     }
 }
 

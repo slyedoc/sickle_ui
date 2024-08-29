@@ -591,13 +591,13 @@ impl UiContext for FloatingPanel {
             _ => Err(format!(
                 "{} doesn't exist for FloatingPanel. Possible contexts: {:?}",
                 target,
-                self.contexts()
+                Vec::from_iter(self.contexts())
             )),
         }
     }
 
-    fn contexts(&self) -> Vec<&'static str> {
-        vec![
+    fn contexts(&self) -> impl Iterator<Item = &str> + '_ {
+        [
             FloatingPanel::DRAG_HANDLE,
             FloatingPanel::TITLE_CONTAINER,
             FloatingPanel::TITLE,
@@ -606,6 +606,7 @@ impl UiContext for FloatingPanel {
             FloatingPanel::CLOSE_BUTTON,
             FloatingPanel::CONTENT_VIEW,
         ]
+        .into_iter()
     }
 }
 

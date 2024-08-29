@@ -609,17 +609,17 @@ impl UiContext for SizedZone {
             _ => Err(format!(
                 "{} doesn't exist for SizedZone. Possible contexts: {:?}",
                 target,
-                self.contexts()
+                Vec::from_iter(self.contexts())
             )),
         }
     }
 
-    fn cleared_contexts(&self) -> Vec<&'static str> {
-        vec![]
+    fn cleared_contexts(&self) -> impl Iterator<Item = &str> + '_ {
+        [].into_iter()
     }
 
-    fn contexts(&self) -> Vec<&'static str> {
-        vec![SizedZone::RESIZE_HANDLES]
+    fn contexts(&self) -> impl Iterator<Item = &str> + '_ {
+        [SizedZone::RESIZE_HANDLES].into_iter()
     }
 }
 

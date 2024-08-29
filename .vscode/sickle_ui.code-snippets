@@ -178,7 +178,7 @@
 			"		}",
 			"	}",
 			"",
-			"	fn contexts(&self) -> Vec<&'static str> {",
+			"	fn contexts(&self) -> impl Iterator<Item = &str> + '_ {",
 			"		vec![${1:MyWidget}::LABEL]",
 			"	}",
 			"}",

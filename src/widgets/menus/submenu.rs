@@ -341,13 +341,13 @@ impl UiContext for Submenu {
             _ => Err(format!(
                 "{} doesn't exist for MenuItem. Possible contexts: {:?}",
                 target,
-                self.contexts()
+                Vec::from_iter(self.contexts())
             )),
         }
     }
 
-    fn contexts(&self) -> Vec<&'static str> {
-        vec![
+    fn contexts(&self) -> impl Iterator<Item = &str> + '_ {
+        [
             MenuItem::LEADING_ICON,
             MenuItem::LABEL,
             MenuItem::SHORTCUT_CONTAINER,
@@ -355,6 +355,7 @@ impl UiContext for Submenu {
             MenuItem::TRAILING_ICON,
             Submenu::MENU_CONTAINER,
         ]
+        .into_iter()
     }
 }
 

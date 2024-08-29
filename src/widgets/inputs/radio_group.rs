@@ -184,17 +184,18 @@ impl UiContext for RadioButton {
             _ => Err(format!(
                 "{} doesn't exist for RadioButton. Possible contexts: {:?}",
                 target,
-                self.contexts()
+                Vec::from_iter(self.contexts())
             )),
         }
     }
 
-    fn contexts(&self) -> Vec<&'static str> {
-        vec![
+    fn contexts(&self) -> impl Iterator<Item = &str> + '_ {
+        [
             RadioButton::RADIOMARK_BACKGROUND,
             RadioButton::RADIOMARK,
             RadioButton::LABEL,
         ]
+        .into_iter()
     }
 }
 

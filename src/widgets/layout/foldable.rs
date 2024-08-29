@@ -107,17 +107,18 @@ impl UiContext for Foldable {
             _ => Err(format!(
                 "{} doesn't exist for Foldable. Possible contexts: {:?}",
                 target,
-                self.contexts()
+                Vec::from_iter(self.contexts())
             )),
         }
     }
 
-    fn contexts(&self) -> Vec<&'static str> {
-        vec![
+    fn contexts(&self) -> impl Iterator<Item = &str> + '_ {
+        [
             Foldable::BUTTON_ICON,
             Foldable::BUTTON_LABEL,
             Foldable::CONTAINER,
         ]
+        .into_iter()
     }
 }
 

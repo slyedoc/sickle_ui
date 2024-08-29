@@ -426,13 +426,13 @@ impl UiContext for ScrollView {
             _ => Err(format!(
                 "{} doesn't exist for ScrollView. Possible contexts: {:?}",
                 target,
-                self.contexts()
+                Vec::from_iter(self.contexts())
             )),
         }
     }
 
-    fn contexts(&self) -> Vec<&'static str> {
-        vec![
+    fn contexts(&self) -> impl Iterator<Item = &str> + '_ {
+        [
             ScrollView::VIEWPORT,
             ScrollView::CONTENT_CONTAINER,
             ScrollView::HORIZONTAL_SCROLL_BAR,
@@ -440,6 +440,7 @@ impl UiContext for ScrollView {
             ScrollView::VERTICAL_SCROLL_BAR,
             ScrollView::VERTICAL_SCROLL_HANDLE,
         ]
+        .into_iter()
     }
 }
 

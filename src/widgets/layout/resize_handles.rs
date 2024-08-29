@@ -204,13 +204,13 @@ impl UiContext for ResizeHandles {
             _ => Err(format!(
                 "{} doesn't exist for ResizeHandles. Possible contexts: {:?}",
                 target,
-                self.contexts()
+                Vec::from_iter(self.contexts())
             )),
         }
     }
 
-    fn contexts(&self) -> Vec<&'static str> {
-        vec![
+    fn contexts(&self) -> impl Iterator<Item = &str> + '_ {
+        [
             ResizeHandles::HANDLE_NORTH,
             ResizeHandles::HANDLE_NORTH_EAST,
             ResizeHandles::HANDLE_EAST,
@@ -220,6 +220,7 @@ impl UiContext for ResizeHandles {
             ResizeHandles::HANDLE_WEST,
             ResizeHandles::HANDLE_NORTH_WEST,
         ]
+        .into_iter()
     }
 }
 

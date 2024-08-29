@@ -397,31 +397,34 @@ where
         }
 
         // Merge base attributes on top of the default and down the chain, overwriting per-attribute at each level
-        let styles: Vec<(Option<Entity>, DynamicStyle)> = pseudo_themes
-            .iter()
-            .map(
-                |(pseudo_theme, source_entity)| match pseudo_theme.builder() {
-                    DynamicStyleBuilder::Static(style) => vec![(None, style.clone())],
+        let mut styles = Vec::<(Option<Entity>, DynamicStyle)>::default();
+        let mut style_builder = StyleBuilder::new();
+        for (pseudo_theme, source_entity) in pseudo_themes.iter() {
+            let builder = pseudo_theme.builder();
+            if let DynamicStyleBuilder::Static(style) = builder {
+                styles = [(None, style.clone())]
+                    .into_iter()
+                    .fold(std::mem::take(&mut styles), fold_dynamic_styles);
+            } else {
+                style_builder.clear();
+                let styles_iter = match builder {
+                    DynamicStyleBuilder::Static(_) => unreachable!(),
                     DynamicStyleBuilder::StyleBuilder(builder) => {
-                        let mut style_builder = StyleBuilder::new();
                         builder(&mut style_builder, &theme_data);
 
-                        style_builder.convert_with(context)
+                        style_builder.convert_to_iter(context)
                     }
                     DynamicStyleBuilder::ContextStyleBuilder(builder) => {
-                        let mut style_builder = StyleBuilder::new();
                         builder(&mut style_builder, &context, &theme_data);
 
-                        style_builder.convert_with(context)
+                        style_builder.convert_to_iter(context)
                     }
                     DynamicStyleBuilder::WorldStyleBuilder(builder) => {
-                        let mut style_builder = StyleBuilder::new();
                         builder(&mut style_builder, entity, &context, world);
 
-                        style_builder.convert_with(context)
+                        style_builder.convert_to_iter(context)
                     }
                     DynamicStyleBuilder::InfoWorldStyleBuilder(builder) => {
-                        let mut style_builder = StyleBuilder::new();
                         builder(
                             &mut style_builder,
                             *source_entity,
@@ -431,33 +434,16 @@ where
                             world,
                         );
 
-                        style_builder.convert_with(context)
+                        style_builder.convert_to_iter(context)
                     }
-                },
-            )
-            .filter(|e_to_dys| e_to_dys.len() > 0)
-            .fold(
-                Vec::with_capacity(context.contexts().len() + 1),
-                |mut acc, context_styles| {
-                    for context_style in context_styles {
-                        let index = acc.iter().position(|entry| entry.0 == context_style.0);
-                        match index {
-                            Some(index) => {
-                                let (_, prev_entry) = acc[index].clone();
-                                acc[index].1 = prev_entry.merge(context_style.1);
-                            }
-                            None => acc.push(context_style),
-                        }
-                    }
-
-                    acc
-                },
-            );
+                };
+                styles = styles_iter.fold(std::mem::take(&mut styles), fold_dynamic_styles);
+            }
+        }
 
         let mut cleanup_main_style = true;
         let mut unstyled_entities: Vec<Entity> = context
             .cleared_contexts()
-            .iter()
             .map(|ctx_name| {
                 // Unsafe unwrap: ctx_name comes from the context itslef, we should panic if it doesn't resolve!
                 context.get(&ctx_name).unwrap()
@@ -505,6 +491,21 @@ where
             world.entity_mut(entity).remove::<DynamicStyle>();
         }
     }
+}
+
+fn fold_dynamic_styles(
+    mut acc: Vec<(Option<Entity>, DynamicStyle)>,
+    mut context_style: (Option<Entity>, DynamicStyle),
+) -> Vec<(Option<Entity>, DynamicStyle)> {
+    let index = acc.iter().position(|entry| entry.0 == context_style.0);
+    match index {
+        Some(index) => {
+            acc[index].1.merge_in_place(&mut context_style.1);
+        }
+        None => acc.push(context_style),
+    }
+
+    acc
 }
 
 pub trait ManageFluxInteractionStopwatchLockExt {

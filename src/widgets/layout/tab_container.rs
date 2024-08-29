@@ -673,13 +673,13 @@ impl UiContext for Tab {
             _ => Err(format!(
                 "{} doesn't exist for Tab. Possible contexts: {:?}",
                 target,
-                self.contexts()
+                Vec::from_iter(self.contexts())
             )),
         }
     }
 
-    fn contexts(&self) -> Vec<&'static str> {
-        vec![Tab::LABEL_CONTAINER, Tab::LABEL, Tab::PANEL]
+    fn contexts(&self) -> impl Iterator<Item = &str> + '_ {
+        [Tab::LABEL_CONTAINER, Tab::LABEL, Tab::PANEL].into_iter()
     }
 }
 
@@ -962,13 +962,13 @@ impl UiContext for TabContainer {
             _ => Err(format!(
                 "{} doesn't exist for TabContainer. Possible contexts: {:?}",
                 target,
-                self.contexts()
+                Vec::from_iter(self.contexts())
             )),
         }
     }
 
-    fn contexts(&self) -> Vec<&'static str> {
-        vec![TabContainer::TAB_BAR]
+    fn contexts(&self) -> impl Iterator<Item = &str> + '_ {
+        [TabContainer::TAB_BAR].into_iter()
     }
 }
 

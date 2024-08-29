@@ -274,7 +274,7 @@ impl ContextStyleAttribute {
 // the same frame they are added, so only interaction animations stay long term.
 // Measure impact
 //#[component(storage = "SparseSet")]
-#[derive(Component, Clone, Debug)]
+#[derive(Component, Clone, Debug, Default)]
 pub struct DynamicStyle {
     attributes: Vec<ContextStyleAttribute>,
     enter_completed: bool,
@@ -301,23 +301,35 @@ impl DynamicStyle {
         }
     }
 
-    pub fn merge(self, other: DynamicStyle) -> Self {
-        let mut new_list = self.attributes;
+    pub fn merge(mut self, mut other: DynamicStyle) -> Self {
+        self.merge_in_place(&mut other);
+        self
+    }
 
-        for attribute in other.attributes {
-            if !new_list.iter().any(|csa| csa.logical_eq(&attribute)) {
-                new_list.push(attribute);
+    pub fn merge_in_place(&mut self, other: &mut DynamicStyle) {
+        self.merge_in_place_from_iter(other.attributes.drain(..));
+        other.enter_completed = false;
+    }
+
+    pub fn merge_in_place_from_iter(
+        &mut self,
+        other_attrs: impl Iterator<Item = ContextStyleAttribute>,
+    ) {
+        for attribute in other_attrs {
+            if !self.attributes.iter().any(|csa| csa.logical_eq(&attribute)) {
+                self.attributes.push(attribute);
             } else {
                 // Safe unwrap: checked in if above
-                let index = new_list
+                let index = self
+                    .attributes
                     .iter()
                     .position(|csa| csa.logical_eq(&attribute))
                     .unwrap();
-                new_list[index] = attribute;
+                self.attributes[index] = attribute;
             }
         }
 
-        DynamicStyle::copy_from(new_list)
+        self.enter_completed = false;
     }
 
     pub fn copy_controllers(&mut self, other: &DynamicStyle) {
@@ -370,5 +382,12 @@ impl DynamicStyle {
         self.attributes
             .iter()
             .any(|csa| csa.attribute.is_animated())
+    }
+
+    /// Extracts the inner attribute buffer.
+    ///
+    /// Allows re-using the buffer via [`Self::copy_from`]. See [`StyleBuilder::convert_to_iter_with_buffers`].
+    pub fn take_inner(self) -> Vec<ContextStyleAttribute> {
+        self.attributes
     }
 }
