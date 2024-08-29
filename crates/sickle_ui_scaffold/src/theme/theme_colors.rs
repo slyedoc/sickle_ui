@@ -425,8 +425,8 @@ pub struct ColorPalettes {
     pub neutral_variant: ColorPalette,
 }
 
-// TODO: write asset loader for theme colors and load it from a material-theme.json
-/// Loosly Follows Material3 theme format
+/// Follows Material3 theme format. For more information (and a web-based theme builder), visit
+/// [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/).
 #[derive(Asset, Clone, Debug, Reflect, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ThemeColors {
