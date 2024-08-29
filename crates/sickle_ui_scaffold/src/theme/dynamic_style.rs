@@ -21,10 +21,11 @@ impl Plugin for DynamicStylePlugin {
         .add_systems(
             PostUpdate,
             (
-                tick_dynamic_style_stopwatch,
                 update_dynamic_style_static_attributes,
                 update_dynamic_style_on_flux_change,
+                tick_dynamic_style_stopwatch,
                 update_dynamic_style_on_stopwatch_change,
+                cleanup_dynamic_style_stopwatch,
             )
                 .chain()
                 .in_set(DynamicStylePostUpdate),
@@ -34,26 +35,6 @@ impl Plugin for DynamicStylePlugin {
 
 #[derive(SystemSet, Clone, Eq, Debug, Hash, PartialEq)]
 pub struct DynamicStylePostUpdate;
-
-fn tick_dynamic_style_stopwatch(
-    time: Res<Time<Real>>,
-    mut q_stopwatches: Query<(Entity, &mut DynamicStyleStopwatch)>,
-    mut commands: Commands,
-) {
-    for (entity, mut style_stopwatch) in &mut q_stopwatches {
-        let remove_stopwatch = match style_stopwatch.1 {
-            StopwatchLock::None => true,
-            StopwatchLock::Infinite => false,
-            StopwatchLock::Duration(length) => style_stopwatch.0.elapsed() > length,
-        };
-
-        if remove_stopwatch {
-            commands.entity(entity).remove::<DynamicStyleStopwatch>();
-        }
-
-        style_stopwatch.0.tick(time.delta());
-    }
-}
 
 fn update_dynamic_style_static_attributes(
     mut q_styles: Query<(Entity, &mut DynamicStyle), Changed<DynamicStyle>>,
@@ -140,6 +121,16 @@ fn update_dynamic_style_on_flux_change(
                 .entity(entity)
                 .insert(DynamicStyleStopwatch(Stopwatch::new(), lock_needed));
         }
+    }
+}
+
+fn tick_dynamic_style_stopwatch(
+    time: Res<Time<Real>>,
+    mut q_stopwatches: Query<(Entity, &mut DynamicStyleStopwatch)>,
+    mut commands: Commands,
+) {
+    for (entity, mut style_stopwatch) in &mut q_stopwatches {
+        style_stopwatch.0.tick(time.delta());
     }
 }
 
@@ -233,6 +224,23 @@ fn update_dynamic_style_on_stopwatch_change(
                 }
             }
         });
+}
+
+fn cleanup_dynamic_style_stopwatch(
+    mut q_stopwatches: Query<(Entity, &mut DynamicStyleStopwatch)>,
+    mut commands: Commands,
+) {
+    for (entity, mut style_stopwatch) in &mut q_stopwatches {
+        let remove_stopwatch = match style_stopwatch.1 {
+            StopwatchLock::None => true,
+            StopwatchLock::Infinite => false,
+            StopwatchLock::Duration(length) => style_stopwatch.0.elapsed() > length,
+        };
+
+        if remove_stopwatch {
+            commands.entity(entity).remove::<DynamicStyleStopwatch>();
+        }
+    }
 }
 
 #[derive(Component, Clone, Debug, Default)]

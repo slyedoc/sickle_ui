@@ -11,10 +11,10 @@ impl Plugin for FluxInteractionPlugin {
             .add_systems(
                 Update,
                 (
-                    tick_flux_interaction_stopwatch,
                     update_flux_interaction,
                     reset_flux_interaction_stopwatch_on_change,
                     update_prev_interaction,
+                    tick_flux_interaction_stopwatch,
                 )
                     .chain()
                     .in_set(FluxInteractionUpdate),
