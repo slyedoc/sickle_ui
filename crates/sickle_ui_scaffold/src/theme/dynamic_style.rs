@@ -25,6 +25,7 @@ impl Plugin for DynamicStylePlugin {
                 update_dynamic_style_on_flux_change,
                 tick_dynamic_style_stopwatch,
                 update_dynamic_style_on_stopwatch_change,
+                // Cleanup in a separate step in case of stopwatches that only exist for 1 tick.
                 cleanup_dynamic_style_stopwatch,
             )
                 .chain()
