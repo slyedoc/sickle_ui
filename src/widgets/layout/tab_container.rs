@@ -39,13 +39,7 @@ impl Plugin for TabContainerPlugin {
             ComponentThemePlugin::<Tab>::default(),
         ))
         .register_type::<Tab>()
-        .add_systems(
-            PreUpdate,
-            (
-                dock_panel_in_tab_container,
-                popout_panel_from_tab.before(SizedZonePreUpdate),
-            ),
-        )
+        .add_systems(PreUpdate, popout_panel_from_tab.before(SizedZonePreUpdate))
         .add_systems(
             Update,
             (
@@ -66,7 +60,8 @@ impl Plugin for TabContainerPlugin {
             )
                 .chain()
                 .in_set(TabContainerUpdate),
-        );
+        )
+        .add_systems(PostUpdate, dock_panel_in_tab_container.before(ThemeUpdate));
     }
 }
 
