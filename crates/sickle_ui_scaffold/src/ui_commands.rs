@@ -329,7 +329,7 @@ where
 {
     fn apply(self, entity: Entity, world: &mut World) {
         let context = world.get::<C>(entity).unwrap();
-        let theme_data = world.resource::<ThemeData>().clone();
+        let theme_data = world.resource::<ThemeData>();
         let pseudo_states = world.get::<PseudoStates>(entity);
         let empty_pseudo_state = Vec::new();
 
