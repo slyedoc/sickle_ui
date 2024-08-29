@@ -14,18 +14,23 @@ pub struct ToggleMenuItemPlugin;
 
 impl Plugin for ToggleMenuItemPlugin {
     fn build(&self, app: &mut App) {
-        app.configure_sets(Update, ToggleMenuItemUpdate.after(MenuItemUpdate))
-            .add_plugins(ComponentThemePlugin::<ToggleMenuItem>::default())
-            .add_systems(
-                Update,
-                (
-                    update_toggle_menu_item_value,
-                    update_toggle_menu_item_on_shortcut_press,
-                    update_toggle_menu_checkmark,
-                )
-                    .chain()
-                    .in_set(ToggleMenuItemUpdate),
-            );
+        app.configure_sets(
+            Update,
+            ToggleMenuItemUpdate
+                .after(MenuItemUpdate)
+                .after(FluxInteractionUpdate),
+        )
+        .add_plugins(ComponentThemePlugin::<ToggleMenuItem>::default())
+        .add_systems(
+            Update,
+            (
+                update_toggle_menu_item_value,
+                update_toggle_menu_item_on_shortcut_press,
+                update_toggle_menu_checkmark,
+            )
+                .chain()
+                .in_set(ToggleMenuItemUpdate),
+        );
     }
 }
 

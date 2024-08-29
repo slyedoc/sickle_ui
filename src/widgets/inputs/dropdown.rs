@@ -26,11 +26,13 @@ impl Plugin for DropdownPlugin {
             (
                 handle_option_press,
                 update_dropdown_label,
-                handle_click_or_touch.after(FluxInteractionUpdate),
+                handle_click_or_touch,
                 update_drowdown_pseudo_state,
-                update_dropdown_panel_visibility.before(ScrollViewLayoutUpdate),
+                update_dropdown_panel_visibility,
             )
-                .chain(),
+                .chain()
+                .after(FluxInteractionUpdate)
+                .before(ScrollViewLayoutUpdate),
         );
     }
 }

@@ -15,6 +15,7 @@ impl Plugin for DynamicStylePlugin {
             PostUpdate,
             DynamicStylePostUpdate
                 .after(CustomThemeUpdate)
+                //todo: use UiSystem::Prepare in bevy v0.15
                 .before(UiSystem::Layout),
         )
         .add_systems(

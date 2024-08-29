@@ -12,7 +12,12 @@ pub struct CheckboxPlugin;
 impl Plugin for CheckboxPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(ComponentThemePlugin::<Checkbox>::default())
-            .add_systems(Update, (toggle_checkbox, update_checkbox).chain());
+            .add_systems(
+                Update,
+                (toggle_checkbox, update_checkbox)
+                    .chain()
+                    .after(FluxInteractionUpdate),
+            );
     }
 }
 

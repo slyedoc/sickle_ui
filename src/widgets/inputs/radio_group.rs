@@ -22,7 +22,9 @@ impl Plugin for RadioGroupPlugin {
                 toggle_radio_button,
                 update_radio_group_buttons,
                 update_radio_button,
-            ),
+            )
+                .chain()
+                .after(FluxInteractionUpdate),
         );
     }
 }

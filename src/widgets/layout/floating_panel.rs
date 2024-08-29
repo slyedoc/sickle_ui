@@ -27,24 +27,29 @@ pub struct FloatingPanelPlugin;
 
 impl Plugin for FloatingPanelPlugin {
     fn build(&self, app: &mut App) {
-        app.configure_sets(Update, FloatingPanelUpdate.after(DroppableUpdate))
-            .add_plugins(ComponentThemePlugin::<FloatingPanel>::default())
-            .add_systems(PreUpdate, update_floating_panel_panel_id)
-            .add_systems(
-                Update,
-                (
-                    index_floating_panels.run_if(panel_added),
-                    process_panel_close_pressed,
-                    process_panel_fold_pressed,
-                    update_panel_size_on_resize,
-                    update_panel_on_title_drag,
-                    handle_window_resize.run_if(window_resized),
-                    update_panel_layout,
-                    touch_new_floating_panels.run_if(panel_added),
-                )
-                    .chain()
-                    .in_set(FloatingPanelUpdate),
-            );
+        app.configure_sets(
+            Update,
+            FloatingPanelUpdate
+                .after(DroppableUpdate)
+                .after(FluxInteractionUpdate),
+        )
+        .add_plugins(ComponentThemePlugin::<FloatingPanel>::default())
+        .add_systems(PreUpdate, update_floating_panel_panel_id)
+        .add_systems(
+            Update,
+            (
+                index_floating_panels.run_if(panel_added),
+                process_panel_close_pressed,
+                process_panel_fold_pressed,
+                update_panel_size_on_resize,
+                update_panel_on_title_drag,
+                handle_window_resize.run_if(window_resized),
+                update_panel_layout,
+                touch_new_floating_panels.run_if(panel_added),
+            )
+                .chain()
+                .in_set(FloatingPanelUpdate),
+        );
     }
 }
 

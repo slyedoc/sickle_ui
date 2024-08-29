@@ -17,6 +17,7 @@ impl Plugin for FoldablePlugin {
         app.configure_sets(
             Update,
             FoldableUpdate
+                .after(FluxInteractionUpdate)
                 .after(MenuItemUpdate)
                 .before(WidgetLibraryUpdate),
         )
