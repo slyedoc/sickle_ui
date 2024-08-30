@@ -21,10 +21,12 @@ opt-level = 1
 opt-level = 3
 
 [features]
+default = ["bevy_default_font"]
 dev = ["bevy/dynamic_linking"]
 disable-ui-context-placeholder-warn = [
     "sickle_ui_scaffold/disable-ui-context-placeholder-warn",
 ]
+bevy_default_font = ["bevy/default_font"]
 
 [dependencies]
 sickle_math = { path = "crates/sickle_math", version = "0.2.3" }
