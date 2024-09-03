@@ -11,7 +11,7 @@ use crate::widgets::layout::{
 #[cfg(feature = "observable")]
 #[derive(Event, Copy, Clone, Debug)]
 pub struct SliderChanged {
-    ratio: f32
+    pub ratio: f32
 }
 
 pub struct SliderPlugin;

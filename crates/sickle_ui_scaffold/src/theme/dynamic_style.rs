@@ -127,10 +127,9 @@ fn update_dynamic_style_on_flux_change(
 
 fn tick_dynamic_style_stopwatch(
     time: Res<Time<Real>>,
-    mut q_stopwatches: Query<(Entity, &mut DynamicStyleStopwatch)>,
-    mut commands: Commands,
+    mut q_stopwatches: Query<&mut DynamicStyleStopwatch>,
 ) {
-    for (entity, mut style_stopwatch) in &mut q_stopwatches {
+    for mut style_stopwatch in &mut q_stopwatches {
         style_stopwatch.0.tick(time.delta());
     }
 }
@@ -228,10 +227,10 @@ fn update_dynamic_style_on_stopwatch_change(
 }
 
 fn cleanup_dynamic_style_stopwatch(
-    mut q_stopwatches: Query<(Entity, &mut DynamicStyleStopwatch)>,
+    mut q_stopwatches: Query<(Entity, &DynamicStyleStopwatch)>,
     mut commands: Commands,
 ) {
-    for (entity, mut style_stopwatch) in &mut q_stopwatches {
+    for (entity, style_stopwatch) in &mut q_stopwatches {
         let remove_stopwatch = match style_stopwatch.1 {
             StopwatchLock::None => true,
             StopwatchLock::Infinite => false,

@@ -7,7 +7,7 @@ use bevy::{
     hierarchy::BuildChildren,
     prelude::*,
 };
-
+use bevy::ecs::system::IntoObserverSystem;
 use crate::{
     ui_commands::EntityCommandsNamedExt,
     ui_style::{UiStyle, UiStyleExt, UiStyleUnchecked, UiStyleUncheckedExt},
@@ -105,6 +105,11 @@ impl UiBuilder<'_, Entity> {
 
     pub fn named(&mut self, name: impl Into<String>) -> &mut Self {
         self.entity_commands().named(name);
+        self
+    }
+
+    pub fn observe<E: Event, B: Bundle, M>(&mut self, system: impl IntoObserverSystem<E, B, M>) -> &mut Self {
+        self.entity_commands().observe(system);
         self
     }
 }
