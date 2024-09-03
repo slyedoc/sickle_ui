@@ -13,6 +13,12 @@ use crate::widgets::layout::{
 
 const DROPDOWN_PANEL_Z_INDEX: usize = 11000;
 
+#[cfg(feature = "observable")]
+#[derive(Event, Copy, Clone, Debug)]
+pub struct DropdownChanged {
+    pub value: Option<usize>,
+}
+
 pub struct DropdownPlugin;
 
 impl Plugin for DropdownPlugin {
@@ -34,6 +40,9 @@ impl Plugin for DropdownPlugin {
                 .after(FluxInteractionUpdate)
                 .before(ScrollViewLayoutUpdate),
         );
+
+        #[cfg(feature = "observable")]
+        app.add_event::<DropdownChanged>();
     }
 }
 
@@ -91,6 +100,7 @@ fn handle_click_or_touch(
 fn handle_option_press(
     q_options: Query<(&DropdownOption, &FluxInteraction), Changed<FluxInteraction>>,
     mut q_dropdown: Query<&mut Dropdown>,
+    mut commands: Commands
 ) {
     for (option, interaction) in &q_options {
         if *interaction == FluxInteraction::Released {
@@ -99,6 +109,11 @@ fn handle_option_press(
             };
 
             dropdown.value = option.option.into();
+
+            #[cfg(feature = "observable")]
+            commands.trigger_targets(DropdownChanged {
+                value: dropdown.value
+            }, option.dropdown);
         }
     }
 }

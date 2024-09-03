@@ -2,11 +2,16 @@ use bevy::{prelude::*, ui::FocusPolicy};
 
 use sickle_macros::UiContext;
 use sickle_ui_scaffold::prelude::*;
-
 use crate::widgets::layout::{
     container::UiContainerExt,
     label::{LabelConfig, UiLabelExt},
 };
+
+#[cfg(feature = "observable")]
+#[derive(Event, Copy, Clone, Debug)]
+pub struct RadioButtonChanged {
+    pub selected: Option<usize>,
+}
 
 pub struct RadioGroupPlugin;
 
@@ -26,6 +31,9 @@ impl Plugin for RadioGroupPlugin {
                 .chain()
                 .after(FluxInteractionUpdate),
         );
+
+        #[cfg(feature = "observable")]
+        app.add_event::<RadioButtonChanged>();
     }
 }
 
@@ -33,6 +41,7 @@ fn toggle_radio_button(
     mut q_radio_buttons: Query<(&mut RadioButton, &FluxInteraction), Changed<FluxInteraction>>,
     keys: Res<ButtonInput<KeyCode>>,
     mut q_group: Query<&mut RadioGroup>,
+    mut commands: Commands,
 ) {
     for (mut radio_button, interaction) in &mut q_radio_buttons {
         if *interaction == FluxInteraction::Pressed {
@@ -62,6 +71,11 @@ fn toggle_radio_button(
             } else {
                 None
             };
+
+            #[cfg(feature = "observable")]
+            commands.trigger_targets(RadioButtonChanged {
+                selected: radio_group.selected
+            }, radio_button.group);
         }
     }
 }

@@ -3,11 +3,16 @@ use std::ops::DerefMut;
 use bevy::{input::mouse::MouseScrollUnit, prelude::*, ui::RelativeCursorPosition};
 
 use sickle_ui_scaffold::{prelude::*, ui_commands::UpdateTextExt};
-
 use crate::widgets::layout::{
     container::UiContainerExt,
     label::{LabelConfig, UiLabelExt},
 };
+
+#[cfg(feature = "observable")]
+#[derive(Event, Copy, Clone, Debug)]
+pub struct SliderChanged {
+    ratio: f32
+}
 
 pub struct SliderPlugin;
 
@@ -25,6 +30,9 @@ impl Plugin for SliderPlugin {
                 )
                     .chain(),
             );
+
+        #[cfg(feature = "observable")]
+        app.add_event::<SliderChanged>();
     }
 }
 
@@ -36,6 +44,7 @@ fn update_slider_on_scroll(
         Changed<Scrollable>,
     >,
     mut q_slider: Query<&mut Slider>,
+    mut commands: Commands,
 ) {
     for ((slider_bar, handle), scrollable) in &q_scrollables {
         let Some((axis, diff, unit)) = scrollable.last_change() else {
@@ -64,6 +73,11 @@ fn update_slider_on_scroll(
 
         let fraction = offset / 100.;
         slider.ratio = (slider.ratio + fraction).clamp(0., 1.);
+
+        #[cfg(feature = "observable")]
+        commands.trigger_targets(SliderChanged {
+            ratio: slider.ratio
+        }, slider_id);
     }
 }
 
@@ -71,6 +85,7 @@ fn update_slider_on_drag(
     q_draggable: Query<(&Draggable, &SliderDragHandle, &Node), Changed<Draggable>>,
     q_node: Query<&Node>,
     mut q_slider: Query<&mut Slider>,
+    mut commands: Commands,
 ) {
     for (draggable, handle, node) in &q_draggable {
         let Ok(mut slider) = q_slider.get_mut(handle.slider) else {
@@ -118,6 +133,11 @@ fn update_slider_on_drag(
         };
 
         slider.ratio = (slider.ratio + fraction).clamp(0., 1.);
+
+        #[cfg(feature = "observable")]
+        commands.trigger_targets(SliderChanged {
+            ratio: slider.ratio
+        }, handle.slider);
     }
 }
 
